@@ -29,7 +29,7 @@ import user from '../assets/img/user.png';
 import bell from '../assets/img/bell.png';
 import chat from '../assets/img/chat.png';
 import add from '../assets/img/add.png';
-import { fn } from './functions'
+import { SearchCenterHeaderModule } from './component';
 
 
 const Stack = createStackNavigator();
@@ -288,8 +288,8 @@ class Nav extends Component {
                     headerTitleAlign: 'center',
                 }} component={ Calender } />
                 <Stack.Screen name="Blog" options={{headerTitleAlign: 'center'}} component={ Blog } />
-                <Stack.Screen name="Law" options={{headerTitleAlign: 'center'}} component={ Law } />
-                <Stack.Screen name="Lawyers" options={{headerTitleAlign: 'center'}} component={ Lawyers } />
+                <Stack.Screen name="Law" options={{ headerTitleAlign: 'center' }} component={Law} />
+                <Stack.Screen name="Lawyers" options={{ headerTitle: () => <SearchCenterHeaderModule /> }} component={Lawyers} />
                 <Stack.Screen name="Jobs" options={{headerTitleAlign: 'center'}} component={ Jobs } />
             </Stack.Navigator>
         );

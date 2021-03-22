@@ -22,6 +22,21 @@ const Styles = StyleSheet.create({
         textAlign: 'center',
         margin: 10,
     },
+    cardD: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignContent: 'center',
+        marginTop: 20,
+    },
+    name: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignContent: 'flex-end',
+        marginTop: 25,
+        marginBottom: 10,
+    },
     containerPaddingMargin: {
         flex: 1,
         padding: 10,
@@ -208,7 +223,6 @@ const Styles = StyleSheet.create({
     profileIamge: {
         flex: 1,
         height: 150,
-        backgroundColor: 'black',
         borderRadius: 7,
         margin: 10,
     },

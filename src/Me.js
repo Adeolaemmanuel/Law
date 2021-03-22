@@ -1,24 +1,44 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, BackHandler, Image, ScrollView, ToastAndroid, } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    BackHandler,
+    Image,
+    ScrollView,
+    ToastAndroid,
+    Pressable,
+} from 'react-native';
 import { NavigationAction } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from './functions/styles';
 import CameraRoll from "@react-native-community/cameraroll";
 import { request, PERMISSIONS } from 'react-native-permissions';
+import { ImageGallerySelectModule } from './functions/component';
+import { Overlay } from 'react-native-elements';
+import storage from '@react-native-firebase/storage';
+import firebase from '@react-native-firebase/app';
+
+
 
 export default class Me extends Component {
   constructor(props) {
     super(props);
       this.state = {
           me: {
-              firstname: null, country: null,lastname: null, email: null,
-              state: null, university: null, start: null, number: null,
-              end: null, experience: null, degree: null, certificate: null,
-              licenceNo: null, company: null, workStart: null, workEnd: null
+              firstname: " ", country: " ",lastname: " ", email: " ",
+              state: " ", university: " ", start: " ", number: " ",
+              end: " ", experience: " ", degree: " ", certificate: " ",
+              licenceNo: " ", company: " ", workStart: " ", workEnd: " "
           },
           home: true,
           edit: false,
+          Images: [],
+          visible: false,
+          profilePic: null
       };
   }
 
@@ -44,6 +64,18 @@ export default class Me extends Component {
                     me.licenceNo = user.data().licenceNo
                     me.company = user.data().company
                     me.email = user.data().email
+                    me.gender = user.data().gender
+
+                    let profilePic = user.data().profilePicture
+                    if (me.gender === 'Male' && profilePic === undefined) {
+                        profilePic = require('./assets/img/profileM.png')
+                        this.setState({ profilePic })
+                    } else if (me.gender === 'Female' && profilePic === undefined) {
+                        profilePic = require('./assets/img/profileW.png')
+                        this.setState({ profilePic })
+                    } else {
+                        this.setState({ profilePic })
+                    }
 
                     for (let x in me) {
                         if (me[x] === undefined) {
@@ -51,11 +83,13 @@ export default class Me extends Component {
                         }
                     }
                     this.setState({ me })
+                    let checl = typeof profilePic
+                    console.log(this.state.profilePic)
                 }
             })
         })
 
-        
+
     }
 
     switch = () => {
@@ -68,6 +102,10 @@ export default class Me extends Component {
             let home = true;
             this.setState({ edit, home })
         }
+    }
+
+    profilePicSwitch = () => {
+
     }
 
     update = () => {
@@ -87,7 +125,10 @@ export default class Me extends Component {
                     assetType: 'Photos',
 
                 }).then(img => {
-                    console.log(img.edges)
+                    let Images = [...img.edges];
+                    let visible = true;
+                    this.setState({ Images, visible })
+                    //console.log(Images)
                 })
             }
         })
@@ -99,7 +140,9 @@ export default class Me extends Component {
                 <>
                     <View style={Styles.containerRow}>
                         <View style={Styles.profileIamge}>
-                            <Text>Image</Text>
+                            <Image
+                                source={typeof this.state.profilePic == 'number' ? this.state.profilePic : { uri: this.state.profilePic }} 
+                                style={{ width: 150, height: 150, margin: 10 }} />
                         </View>
 
                         <View style={Styles.container}>
@@ -442,6 +485,56 @@ export default class Me extends Component {
         }
     }
 
+    toggleOverlay = () => {
+        let visible = false;
+        this.setState({ visible })
+    }
+
+    getImage(arr) {
+        let profilePic = arr.node.image.uri
+        this.setState({ profilePic })
+        let user = firestore().collection('Users')
+
+        AsyncStorage.getItem('user').then(d => {
+            if (d != null) {
+                const reference = storage().ref(`${d}/profile`);
+                reference.putFile(arr.node.image.uri).then(() => {
+                    reference.getDownloadURL().then(i => {
+                        user.doc(d).update({
+                            profilePicture: i
+                    }).then(() => {
+                            ToastAndroid.show("Profile Picture Updated", ToastAndroid.TOP);
+                         })
+                    })
+                    
+                })
+            }
+        })
+        console.log(arr.node.image.uri)
+        this.toggleOverlay();
+    }
+
+
+    getGallarey = () => {
+        return (
+            <View>
+                <Overlay isVisible={this.state.visible} onBackdropPress={this.toggleOverlay} style={{ height: 400, width: 300 }}>
+                    <View style={Styles.containerRow}>
+                        {
+                            this.state.Images.map(arr => {
+                                return (
+                                    <Pressable onPress={() => this.getImage(arr)} style={Styles.padding}>
+                                        <Image key={arr} source={{ uri: arr.node.image.uri }} style={{ height: 150, width: 150 }} />
+                                    </Pressable>
+                                )
+                            })
+                        }
+                    </View>
+                </Overlay>
+            </View>
+        )
+    }
+
     render() {
         return (
             <ScrollView>
@@ -451,6 +544,9 @@ export default class Me extends Component {
                     }
                     {
                         this.edit()
+                    }
+                    {
+                        this.getGallarey()
                     }
                 </KeyboardAvoidingView>
             </ScrollView>

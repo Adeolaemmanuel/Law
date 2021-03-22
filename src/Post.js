@@ -151,15 +151,12 @@ export default class Post extends Component {
         }
     }
 
-    appeal = () => {
-        return (
-            <ScrollView>
-                <KeyboardAvoidingView>
-                    <View style={Styles.container} >
-                        <Modal
-                            animationType="slide"
-                            visible={this.state.Jobs[1].modal}
-                        >
+    appeal = (view) => {
+        if (view) {
+            return (
+                <ScrollView>
+                    <KeyboardAvoidingView>
+                        <View style={Styles.container} >
                             <View style={Styles.containerPaddingMargin}>
                                 <View>
                                     <TouchableOpacity style={Styles.button} onPress={() => this.modalOpen(1)}>
@@ -170,22 +167,22 @@ export default class Post extends Component {
                                     <TextInput style={Styles.input} placeholder="Title:" />
                                 </View>
                                 <View>
-                                    <TextInput style={Styles.input} placeholder="Position:" />
+                                    <TextInput style={Styles.input} placeholder="Location:" />
                                 </View>
                                 <View>
                                     <TextInput style={Styles.input} placeholder="Salary:" />
                                 </View>
-                                <View style={{ margin: 10 }}>
-                                    <TextInput style={[{ height: 130 }, Styles.inputCustom]} placeholder="Summary:" multiline={true} numberOfLines={10} />
+                                <View>
+                                    <TextInput style={[Styles.inputCustom]} placeholder="Summary:" multiline={true} numberOfLines={5} />
                                 </View>
 
                                 <Button title="Post" type="solid" buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }} />
                             </View>
-                        </Modal>
-                    </View>
-                </KeyboardAvoidingView>
-            </ScrollView>
-        )
+                        </View>
+                    </KeyboardAvoidingView>
+                </ScrollView>
+            )
+        }
     }
 
     render() {

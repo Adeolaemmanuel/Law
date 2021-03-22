@@ -61,6 +61,7 @@ export default class Register extends Component {
           if (type === 'next') {
               for (let d in data) {
                   if (data[d] !== null) {
+                      data.gender.substr(0, 1).toUpperCase();
                       this.setState({ [prev]: false });
                       this.setState({ [next]: true });
                   }

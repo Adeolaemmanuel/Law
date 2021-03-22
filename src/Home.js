@@ -47,20 +47,29 @@ export default class Home extends Component {
             load: true,
             dimensions: { width: Math.ceil(Dimensions.get('window').width), height: Math.ceil(Dimensions.get('window').height) },
         };
-    }
-
-    componentDidMount() {
         let slideVisible;
         AsyncStorage.getItem('slideVisible').then(d => {
             console.log(d)
             if (d === 'true') {
                 slideVisible = false;
-                this.setState({ slideVisible: slideVisible });
+                if (!slideVisible) {
+                    this.setState({ slideVisible });
+                }
             } else {
                 slideVisible = true;
-                this.setState({ slideVisible: slideVisible });
+                if (slideVisible) {
+                    this.setState({ slideVisible });
+                }
             }
         });
+        AsyncStorage.getItem('user').then(d => {
+            if (d != null) {
+                this.props.navigation.push('Drawer')
+            }
+        })
+    }
+
+    componentDidMount() {
         //this.clearAll();
         BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
         setTimeout(() => {
