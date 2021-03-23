@@ -2,16 +2,32 @@ import React, { Component } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, TextInput, Text } from 'react-native';
+import { View, TextInput, Text, Pressable } from 'react-native';
 import { Styles } from './styles';
-import { Overlay, Image } from 'react-native-elements';
+import { Overlay, Image, Icon } from 'react-native-elements';
 
 class SearchCenterHeaderModule extends Component {
 
+    constructor(props) {
+        super(props);
+
+    }
+
+    changeText = (text) => {
+        this.props.valueChange(text)
+    }
+
     render() {
         return (
-            <View style={[{ width: '100%' }]}>
-                <TextInput placeholder='Search...' style={[{ width: '100%', fontSize: 20 }, Styles.inputCustom]} />
+            <View style={[{ backgroundColor: 'white', elevation: 5, shadowColor: 'black', shadowOffset: { width: 15, height: 15 }, shadowOpacity: 1, }, Styles.containerRow]}>
+                <Pressable onPress={() => this.props.navigation.goBack()}>
+                    <Image style={{ flex: 1, width: 20, height: 20, padding: 10, margin: 10, marginTop: 25 }} source={require('../assets/img/left-arrow.png')} />
+                </Pressable>
+                <TextInput
+                    placeholder='Search User...'
+                    style={[{ fontSize: 20, padding: 10, margin: 10, flex: 2, backgroundColor: '#ebedf0', borderRadius: 2 }]}
+                    onChangeText={text => this.changeText(text)}
+                />
             </View>    
         )
     }

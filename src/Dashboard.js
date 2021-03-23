@@ -52,34 +52,34 @@ export default class Dashboard extends Component {
                             </View>
                         </View>
                     </Card>
-                    <View style={Styles.NavContainer}>
+                    <View style={Styles.containerRow}>
                         <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Jobs')}>
                             <Image style={Styles.image} source={Jobs} />
-                            <Text style={Styles.text}>Jobs</Text>
+                            <Text style={Styles.navText}>Jobs</Text>
                         </TouchableOpacity>
                         <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Post')}>
                             <Image style={Styles.image} source={Post} />
-                            <Text style={Styles.text}>Post Jobs</Text>
+                            <Text style={Styles.navText}>Post Jobs</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={Styles.NavContainer}>
+                    <View style={Styles.containerRow}>
                         <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Calender')}>
                             <Image style={Styles.image} source={Calender} />
-                            <Text style={Styles.text}>Calendar</Text>
+                            <Text style={Styles.navText}>Calendar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Lawyers')}>
                             <Image style={Styles.image} source={Lawyer} />
-                            <Text style={Styles.text}>Lawyers</Text>
+                            <Text style={Styles.navText}>Lawyers</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={Styles.NavContainer}>
+                    <View style={Styles.containerRow}>
                         <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Law')}>
                             <Image style={Styles.image} source={LawBook} />
-                            <Text style={Styles.text}>Law</Text>
+                            <Text style={Styles.navText}>Law</Text>
                         </TouchableOpacity>
                         <TouchableOpacity  style={Styles.nav}  onPress={()=> this.props.navigation.navigate('Blog')}>
                             <Image style={Styles.image} source={Blog} />
-                            <Text style={Styles.text}>Blog</Text>
+                            <Text style={Styles.navText}>Blog</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

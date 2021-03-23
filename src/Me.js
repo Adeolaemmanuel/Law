@@ -11,16 +11,12 @@ import {
     ToastAndroid,
     Pressable,
 } from 'react-native';
-import { NavigationAction } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from './functions/styles';
-import CameraRoll from "@react-native-community/cameraroll";
-import { request, PERMISSIONS } from 'react-native-permissions';
-import { ImageGallerySelectModule } from './functions/component';
 import { Overlay } from 'react-native-elements';
 import storage from '@react-native-firebase/storage';
-import firebase from '@react-native-firebase/app';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 
 
@@ -83,8 +79,6 @@ export default class Me extends Component {
                         }
                     }
                     this.setState({ me })
-                    let checl = typeof profilePic
-                    console.log(this.state.profilePic)
                 }
             })
         })
@@ -104,9 +98,6 @@ export default class Me extends Component {
         }
     }
 
-    profilePicSwitch = () => {
-
-    }
 
     update = () => {
         let user = firestore().collection('Users');
@@ -118,19 +109,26 @@ export default class Me extends Component {
     }
 
     upload = () => {
-        request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(e => {
-            if (e === 'granted') {
-                CameraRoll.getPhotos({
-                    first: 6,
-                    assetType: 'Photos',
+        launchImageLibrary('photo', img => {
+            let profilePic = img.uri
+            this.setState({ profilePic })
+            let user = firestore().collection('Users')
 
-                }).then(img => {
-                    let Images = [...img.edges];
-                    let visible = true;
-                    this.setState({ Images, visible })
-                    //console.log(Images)
-                })
-            }
+            AsyncStorage.getItem('user').then(d => {
+                if (d != null) {
+                    const reference = storage().ref(`${d}/profile`);
+                    reference.putFile(img.uri).then(() => {
+                        reference.getDownloadURL().then(i => {
+                            user.doc(d).update({
+                                profilePicture: i
+                            }).then(() => {
+                                ToastAndroid.show("Profile Picture Updated", ToastAndroid.TOP);
+                            })
+                        })
+
+                    })
+                }
+            })
         })
     }
 
@@ -490,41 +488,18 @@ export default class Me extends Component {
         this.setState({ visible })
     }
 
-    getImage(arr) {
-        let profilePic = arr.node.image.uri
-        this.setState({ profilePic })
-        let user = firestore().collection('Users')
-
-        AsyncStorage.getItem('user').then(d => {
-            if (d != null) {
-                const reference = storage().ref(`${d}/profile`);
-                reference.putFile(arr.node.image.uri).then(() => {
-                    reference.getDownloadURL().then(i => {
-                        user.doc(d).update({
-                            profilePicture: i
-                    }).then(() => {
-                            ToastAndroid.show("Profile Picture Updated", ToastAndroid.TOP);
-                         })
-                    })
-                    
-                })
-            }
-        })
-        console.log(arr.node.image.uri)
-        this.toggleOverlay();
-    }
 
 
     getGallarey = () => {
         return (
             <View>
-                <Overlay isVisible={this.state.visible} onBackdropPress={this.toggleOverlay} style={{ height: 400, width: 300 }}>
-                    <View style={Styles.containerRow}>
+                <Overlay isVisible={this.state.visible} onBackdropPress={this.toggleOverlay} style={{ width: 300 }}>
+                    <View>
                         {
                             this.state.Images.map(arr => {
                                 return (
-                                    <Pressable onPress={() => this.getImage(arr)} style={Styles.padding}>
-                                        <Image key={arr} source={{ uri: arr.node.image.uri }} style={{ height: 150, width: 150 }} />
+                                    <Pressable onPress={() => this.getImage(arr)} style={[{ margin: 10, marginLeft: 10 }]}>
+                                        <Image key={arr} source={{ uri: arr.node.image.uri }} style={{ height: 100, width: 100, }} />
                                     </Pressable>
                                 )
                             })

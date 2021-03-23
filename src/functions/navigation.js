@@ -289,8 +289,9 @@ class Nav extends Component {
                 }} component={ Calender } />
                 <Stack.Screen name="Blog" options={{headerTitleAlign: 'center'}} component={ Blog } />
                 <Stack.Screen name="Law" options={{ headerTitleAlign: 'center' }} component={Law} />
-                <Stack.Screen name="Lawyers" options={{ headerTitle: () => <SearchCenterHeaderModule /> }} component={Lawyers} />
-                <Stack.Screen name="Jobs" options={{headerTitleAlign: 'center'}} component={ Jobs } />
+                <Stack.Screen name="Lawyers" options={{ headerShown: false }} component={Lawyers} />
+                <Stack.Screen name="Jobs" options={{ headerTitleAlign: 'center' }} component={Jobs} />
+                <Stack.Screen name="Profile" options={{ headerTitleAlign: 'center' }} component={Profile} />
             </Stack.Navigator>
         );
     }

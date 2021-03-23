@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import { View, Modal, Image, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Styles } from "./functions/styles";
 import { Button } from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { launchImageLibrary } from 'react-native-image-picker';
+
+
 
 export default class Post extends Component {
     constructor(props) {
@@ -32,23 +37,33 @@ export default class Post extends Component {
         }
     }
 
+    postJob = (type,data) => {
+        let Jobs = firestore().collection('Jobs')
+        let dataStream = { ...data, type: type }
+        for (let x in dataStream) {
+            if (dataStream.type === 'Appeal' && data[x] != "" ) {
+                
+            }
+        }
+    }
+
     Home = (view) => {
         if (view) {
             return (
                 <View>
-                    <View style={Styles.homeContainer}>
+                    <View style={Styles.containerRow}>
                         <TouchableOpacity
                             android_disableSound={true}
-                            style={Styles.coloumn}
+                            style={Styles.nav}
                             onPress={() => this.modalOpen(0)}>
-                            <Image source={this.state.Jobs[0].icon} style={Styles.icon} />
+                            <Image source={this.state.Jobs[0].icon} style={Styles.image} />
                             <Text style={Styles.navText}>{this.state.Jobs[0].name}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             android_disableSound={true}
-                            style={Styles.coloumn}
+                            style={Styles.nav}
                             onPress={() => this.modalOpen(1)}>
-                            <Image source={this.state.Jobs[1].icon} style={Styles.icon} />
+                            <Image source={this.state.Jobs[1].icon} style={Styles.image} />
                             <Text style={Styles.navText}>{this.state.Jobs[1].name}</Text>
                         </TouchableOpacity>
                     </View>
@@ -57,6 +72,8 @@ export default class Post extends Component {
         }
     }
 
+
+    // fore serurity reasons i advise only lincensce confirmed lawyers are allowed access
     vacancy = (view) => {
         if (view) {
             return (
@@ -170,7 +187,7 @@ export default class Post extends Component {
                                     <TextInput style={Styles.input} placeholder="Location:" />
                                 </View>
                                 <View>
-                                    <TextInput style={Styles.input} placeholder="Salary:" />
+                                    <TextInput style={Styles.input} placeholder="Date:" />
                                 </View>
                                 <View>
                                     <TextInput style={[Styles.inputCustom]} placeholder="Summary:" multiline={true} numberOfLines={5} />

@@ -17,18 +17,14 @@ export default class Wallet extends Component {
         return (
             <ScrollView>
                 <View style={Styles.container}>
-                    <Card>
+                    <View style={Styles.card}>
                         <View style={Styles.cardD}>
-                            <View>
-                                <Text style={{fontSize: 50}}>₦ {this.state.balance}</Text>
-                            </View>
+                            <Text style={{ fontSize: 50 }}>₦ {this.state.balance}</Text>
                         </View>
-                        <View style={Styles.name}>
-                            <View>
-                                <Text style={{fontSize: 20}}>Adeola Emmanuel</Text>
-                            </View>
+                        <View style={{ margin: 5, padding: 5 , justifyContent: 'flex-end', alignContent: 'flex-end', flexDirection: 'row' }}>
+                            <Text style={{ fontSize: 20 }}>Adeola Emmanuel</Text>
                         </View>
-                    </Card>
+                    </View>
                     <View style={Styles.container}>
                         <TextInput placeholder="Card Number:" style={Styles.input} />
                     </View>
@@ -37,7 +33,7 @@ export default class Wallet extends Component {
                         <TextInput placeholder="Last Name:" style={[{ flex: 1 }, Styles.input]} />
                     </View>
                     <View style={Styles.containerRow}>
-                        <TextInput placeholder="Card Number:" style={[{ flex: 1 }, Styles.input]} />
+                        <TextInput placeholder="Ex:" style={[{ flex: 1 }, Styles.input]} />
                         <TextInput placeholder="Card Number:" style={[{ flex: 1 }, Styles.input]} />
                     </View>
                 </View>

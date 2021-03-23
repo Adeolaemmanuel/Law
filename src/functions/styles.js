@@ -29,6 +29,20 @@ const Styles = StyleSheet.create({
         alignContent: 'center',
         marginTop: 20,
     },
+    card: {
+        flex: 1,
+        height: 150,
+        padding: 10,
+        borderRadius: 5,
+        margin: 10,
+        shadowColor: 'black',
+        shadowOffset: { x: 0, y: 10 },
+        shadowOpacity: 1,
+        alignSelf: 'stretch',
+        backgroundColor: 'white',
+        marginTop: 20,
+        elevation: 5
+    },
     name: {
         flex: 1,
         flexDirection: 'row',
@@ -68,22 +82,11 @@ const Styles = StyleSheet.create({
         padding: 10,
         fontSize: 20,
     },
-    coloumn: {
-        flex: 1,
-        backgroundColor: 'white',
-        height: 150,
-        margin: 20,
-    },
     icon: {
         width: 100,
         height: 100,
         margin: 10,
         alignSelf: 'center'
-    },
-    navText: {
-        fontSize: 20,
-        alignSelf: 'center',
-        fontWeight: 'bold',
     },
     content: {
         width: '95%',
@@ -138,31 +141,27 @@ const Styles = StyleSheet.create({
         width: '95%',
         alignSelf: 'center',
     },
-    NavContainer: {
-        flex: 1,
-        margin: 20,
-        flexDirection: 'row',
-    },
     nav: {
         flex: 1,
         height: 150,
         padding: 10,
         borderRadius: 5,
         margin: 10,
-        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowColor: 'black',
         shadowOffset: { x: 0, y: 10 },
         shadowOpacity: 1,
         alignSelf: 'stretch',
         backgroundColor: 'white',
         marginTop: 20,
-        borderWidth: 0.5,
+        elevation: 5
         //backgroundColor: '#161b22',
 
     },
-    text: {
+    navText: {
         textAlign: 'center',
         fontSize: 25,
         padding: 7,
+        fontWeight: 'bold'
     },
     fonts: {
         alignSelf: 'center',
