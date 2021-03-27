@@ -144,7 +144,7 @@ export class Vacancy extends Component {
                                     onChangeText={
                                         text => {
                                             let vacancy = { ...this.state.vacancy };
-                                            vacancy.title = text;
+                                            vacancy.title = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ vacancy });
                                         }
                                     }
@@ -157,7 +157,7 @@ export class Vacancy extends Component {
                                     onChangeText={
                                         text => {
                                             let vacancy = { ...this.state.vacancy };
-                                            vacancy.company = text;
+                                            vacancy.company = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ vacancy });
                                         }
                                     }
@@ -168,7 +168,7 @@ export class Vacancy extends Component {
                                     onChangeText={
                                         text => {
                                             let vacancy = { ...this.state.vacancy };
-                                            vacancy.type = text;
+                                            vacancy.type = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ vacancy });
                                         }
                                     }
@@ -181,7 +181,7 @@ export class Vacancy extends Component {
                                     onChangeText={
                                         text => {
                                             let vacancy = { ...this.state.vacancy };
-                                            vacancy.location = text;
+                                            vacancy.location = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ vacancy });
                                         }
                                     }
@@ -192,7 +192,7 @@ export class Vacancy extends Component {
                                     onChangeText={
                                         text => {
                                             let vacancy = { ...this.state.vacancy };
-                                            vacancy.experience = text;
+                                            vacancy.experience = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ vacancy });
                                         }
                                     }
@@ -207,7 +207,7 @@ export class Vacancy extends Component {
                                     onChangeText={
                                         text => {
                                             let vacancy = { ...this.state.vacancy };
-                                            vacancy.summary = text;
+                                            vacancy.summary = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ vacancy });
                                         }
                                     }
@@ -283,7 +283,7 @@ export class Appeal extends Component {
                                     onChangeText={
                                         text => {
                                             let appeal = { ...this.state.appeal };
-                                            appeal.title = text;
+                                            appeal.title = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ appeal });
                                         }
                                     }
@@ -296,7 +296,7 @@ export class Appeal extends Component {
                                     onChangeText={
                                         text => {
                                             let appeal = { ...this.state.appeal };
-                                            appeal.location = text;
+                                            appeal.location = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ appeal });
                                         }
                                     }
@@ -309,7 +309,7 @@ export class Appeal extends Component {
                                     onChangeText={
                                         text => {
                                             let appeal = { ...this.state.appeal };
-                                            appeal.date = text;
+                                            appeal.date = text.charAt(0).toUpperCase() + text.slice(1);
                                             this.setState({ appeal });
                                         }
                                     }
@@ -322,6 +322,13 @@ export class Appeal extends Component {
                                     multiline={true}
                                     numberOfLines={3}
                                     underlineColorAndroid="transparent"
+                                    onChangeText={
+                                        text => {
+                                            let appeal = { ...this.state.appeal };
+                                            appeal.summary = text.charAt(0).toUpperCase() + text.slice(1);
+                                            this.setState({ appeal });
+                                        }
+                                    }
 
                                 />
                             </View>

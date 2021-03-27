@@ -24,10 +24,6 @@ export default class Profile extends Component {
                 end: ' ', experience: ' ', degree: ' ', certificate: ' ',
                 licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ', gender: ' ',
             },
-            home: true,
-            edit: false,
-            Images: [],
-            visible: false,
             profilePic: null,
         };
     }
@@ -54,16 +50,18 @@ export default class Profile extends Component {
                 me.company = users.data().company;
                 me.email = users.data().email;
                 me.gender = users.data().gender;
+                me.workStart = users.data().workStart;
+                me.workEnd = users.data().workEnd;
 
-                let profilePic = user.data().profilePicture;
+                let profilePic = users.data().profilePicture;
                 if (me.gender === 'Male' && profilePic === undefined) {
                     profilePic = require('./assets/img/profileM.png')
-                    this.setState({ profilePic })
+                    this.setState({ profilePic });
                 } else if (me.gender === 'Female' && profilePic === undefined) {
                     profilePic = require('./assets/img/profileW.png')
-                    this.setState({ profilePic })
+                    this.setState({ profilePic });
                 } else {
-                    this.setState({ profilePic })
+                    this.setState({ profilePic });
                 }
 
                 for (let x in me) {

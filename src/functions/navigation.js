@@ -19,7 +19,7 @@ import News from '../News';
 import Calender from '../Calender';
 import Blog, { BlogPost } from '../Blog';
 import Message from '../Message';
-import Me from '../Me';
+import Me, { Edit } from '../Me';
 import Law from '../Law';
 import Lawyers from '../Lawyers';
 import Jobs, {JobDetails} from '../Jobs';
@@ -255,7 +255,7 @@ class Nav extends Component {
                 />
                 <Stack.Screen 
                 name="Job Details" 
-                options={{ headerTitleAlign: 'center' }} 
+                options={{ headerTitleAlign: 'center', headerTitle: 'Details' }} 
                 component={JobDetails} 
                 />
                 <Stack.Screen 
@@ -277,6 +277,11 @@ class Nav extends Component {
                 name="Blog Post" 
                 options={{ headerTitleAlign: 'center' }} 
                 component={BlogPost} 
+                />
+                <Stack.Screen 
+                name="Profile Edit" 
+                options={{ headerTitleAlign: 'center', headerTitle: 'Edit' }} 
+                component={Edit} 
                 />
             </Stack.Navigator>
         );

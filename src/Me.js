@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
@@ -31,9 +32,6 @@ export default class Me extends Component {
               licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ',
               followers: 0, following: 0,
           },
-          home: true,
-          edit: false,
-          Images: [],
           profilePic: null,
       };
   }
@@ -91,25 +89,215 @@ export default class Me extends Component {
 
     }
 
-    switch = () => {
-        if (this.state.home === true) {
-            let edit = true;
-            let home = false;
-            this.setState({ edit, home });
-        } else {
-            let edit = false;
-            let home = true;
-            this.setState({ edit, home });
-        }
+    render() {
+        return (
+            <ScrollView  style={[{backgroundColor: 'white'}, Styles.container]}>
+                <View style={Styles.containerRow}>
+                    <View style={Styles.profileIamge}>
+                        <Image
+                            source={typeof this.state.profilePic === 'number' ? this.state.profilePic : { uri: this.state.profilePic }}
+                            style={{ width: 150, height: 150, margin: 10 }}
+                        />
+                    </View>
+                    <View style={Styles.container}>
+                        <TouchableOpacity
+                            style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
+                            onPress={()=>this.props.navigation.navigate('Profile Edit')}
+                        >
+                            <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, margin: 10 }}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
+                            onPress={this.upload}
+                        >
+                            <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, padding: 10 }}>Upload</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={[{ margin: 10, padding: 10 }, Styles.containerRow]}>
+                    <View style={{ flex: 1, height: 50, padding: 10, margin: 10 }}>
+                        <Text style={{ fontSize: 20, alignSelf: 'center' }}>Followers</Text>
+                        <Text style={{ fontSize: 20, alignSelf: 'center' }}>{this.state.followers}</Text>
+                    </View>
+                    <View style={{ flex: 1, height: 50, padding: 10, margin: 10 }}>
+                        <Text style={{ fontSize: 20, alignSelf: 'center' }}>Following</Text>
+                        <Text style={{ fontSize: 20, alignSelf: 'center' }}>{this.state.following}</Text>
+                    </View>
+                </View>
+
+                <View style={[Styles.container]}>
+                    <Text style={Styles.heading}>ABOUT</Text>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/user2.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{`${this.state.me.firstname} ${this.state.me.lastname}`}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/at.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.email}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/smartphone.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.number}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/world.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.country}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/pin.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.state}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={[Styles.container]}>
+                    <Text style={Styles.heading}>EDUCATION</Text>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/university.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.university}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{`${this.state.me.start} - ${this.state.me.end}`}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/diploma.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.degree}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/document.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.certificate}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={[Styles.container]}>
+                    <Text style={Styles.heading}>WORK</Text>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.experience} Years Experience</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{this.state.me.company}</Text>
+                        </View>
+                    </View>
+                    <View style={Styles.containerRow}>
+                        <View style={{ margin: 10 }}>
+                            <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
+                        </View>
+                        <View style={{ margin: 10 }}>
+                        <Text style={{ fontSize: 20 }}>{`${this.state.me.workStart} - ${this.state.me.workEnd}`}</Text>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+        );
+    }
+}
+
+export class Edit extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            me: {
+                firstname: ' ', country: ' ',lastname: ' ', email: ' ',
+                state: ' ', university: ' ', start: ' ', number: ' ',
+                end: ' ', experience: ' ', degree: ' ', certificate: ' ',
+                licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ',
+                followers: 0, following: 0,
+            },
+        };
     }
 
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', () => { return true});
+
+        AsyncStorage.getItem('user').then(res => {
+            let user = firestore().collection('Users');
+            user.doc(res).onSnapshot( user => {
+                if (user.exists) {
+                    let me = { ...this.state.me }
+                    me.firstname = user.data().firstname;
+                    me.lastname = user.data().lastname;
+                    me.country = user.data().country;
+                    me.state = user.data().state;
+                    me.university = user.data().education;
+                    me.start = user.data().start;
+                    me.end = user.data().end;
+                    me.degree = user.data().degree;
+                    me.certificate = user.data().certificate;
+                    me.experience = user.data().experience;
+                    me.number = user.data().number;
+                    me.licenceNo = user.data().licenceNo;
+                    me.company = user.data().company;
+                    me.email = user.data().email;
+                    me.gender = user.data().gender;
+                    me.following = user.data().following;
+                    me.followers = user.data().followers;
+                    me.workStart = user.data().workStart;
+                    me.workEnd = user.data().workEnd;
+
+                    for (let x in me) {
+                        if (me[x] === undefined) {
+                            me[x] = 'none';
+                        }
+                    }
+                    this.setState({ me });
+                }
+            });
+        });
+
+
+    }
 
     update = () => {
         let user = firestore().collection('Users');
         AsyncStorage.getItem('user').then(res => {
             user.doc(res).update(this.state.me).then(() => {
                 ToastAndroid.show('Profile Updated', ToastAndroid.TOP);
-                this.switch();
             });
         });
     }
@@ -138,165 +326,11 @@ export default class Me extends Component {
         });
     }
 
-    HomeComponent = () => {
-        if (this.state.home) {
-            return (
-                <>
-                    <View style={Styles.containerRow}>
-                        <View style={Styles.profileIamge}>
-                            <Image
-                                source={typeof this.state.profilePic === 'number' ? this.state.profilePic : { uri: this.state.profilePic }}
-                                style={{ width: 150, height: 150, margin: 10 }} />
-                        </View>
-
-                        <View style={Styles.container}>
-                            <TouchableOpacity
-                                style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                                onPress={this.switch}
-                            >
-                                <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, margin: 10 }}>Edit</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                                onPress={this.upload}
-                            >
-                                <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, padding: 10 }}>Upload</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View style={[{ margin: 10, padding: 10 }, Styles.containerRow]}>
-                        <View style={{ flex: 1, height: 50, padding: 10, margin: 10 }}>
-                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>Followers</Text>
-                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>{this.state.followers}</Text>
-                        </View>
-                        <View style={{ flex: 1, height: 50, padding: 10, margin: 10 }}>
-                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>Following</Text>
-                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>{this.state.following}</Text>
-                        </View>
-                    </View>
-
-                    <View style={[Styles.container]}>
-                        <Text style={Styles.heading}>ABOUT</Text>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/user2.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{`${this.state.me.firstname} ${this.state.me.lastname}`}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/at.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.email}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/smartphone.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.number}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/world.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.country}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/pin.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.state}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={[Styles.container]}>
-                        <Text style={Styles.heading}>EDUCATION</Text>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/university.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.university}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{`${this.state.me.start} - ${this.state.me.end}`}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/diploma.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.degree}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/document.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.certificate}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={[Styles.container]}>
-                        <Text style={Styles.heading}>WORK</Text>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.experience} Years Experience</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.company}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                            <Text style={{ fontSize: 20 }}>{`${this.state.me.workStart} - ${this.state.me.workEnd}`}</Text>
-                            </View>
-                        </View>
-                    </View>
-                </>
-            );
-        }
-    }
-
-    EditComponent = () => {
-        if (this.state.edit) {
-            return (
-                <View style={Styles.container}>
-                    <View>
-                        <TouchableOpacity style={{ alignSelf: 'center', margin: 10 }} onPress={this.switch}>
-                            <Image source={require('./assets/img/cancel.png')} style={{ width: 30, height: 30 }} />
-                        </TouchableOpacity>
-                    </View>
+    render(){
+        return (
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <KeyboardAvoidingView>
+                    <View style={Styles.container}>
 
                     <Text style={[{ alignSelf: 'center' }, Styles.heading]}>ABOUT</Text>
 
@@ -482,21 +516,7 @@ export default class Me extends Component {
                             buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
                             onPress={this.update}
                         />
-                </View>
-            );
-        }
-    }
-
-    render() {
-        return (
-            <ScrollView  style={[{backgroundColor: 'white'}, Styles.container]}>
-                <KeyboardAvoidingView>
-                    {
-                        this.HomeComponent()
-                    }
-                    {
-                        this.EditComponent()
-                    }
+                    </View>
                 </KeyboardAvoidingView>
             </ScrollView>
         );

@@ -1,14 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { 
-    Pressable, 
-    ScrollView, 
-    View 
-    
+import {
+    Pressable,
+    ScrollView,
+    View,
 } from 'react-native';
 import { Avatar, Card, ListItem } from 'react-native-elements';
 import { Styles } from './functions/styles';
 import firestore from '@react-native-firebase/firestore';
-import Law from './Law';
 import { SearchCenterHeaderModule } from './functions/component';
 import { Dimensions } from 'react-native';
 
@@ -54,9 +53,9 @@ export default class Lawyers extends Component {
 
                             let profilePic = lawyer.data().profilePicture;
                             if (lawyer.gender === 'Male' && profilePic === undefined) {
-                                profilePic = require('./assets/img/profileM.png')
+                                profilePic = require('./assets/img/profileM.png');
                             } else if (lawyer.gender === 'Female' && profilePic === undefined) {
-                                profilePic = require('./assets/img/profileW.png')
+                                profilePic = require('./assets/img/profileW.png');
                             }
 
                             lawyers.push({
@@ -70,11 +69,8 @@ export default class Lawyers extends Component {
                         }
                     })
                 }
-                
-                
             }
-        })
-        
+        });
     }
 
     render() {

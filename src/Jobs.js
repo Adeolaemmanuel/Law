@@ -100,7 +100,8 @@ export class JobDetails extends Component {
                     <View style={{margin: 20, padding: 10}}>
                         <Text style={{alignSelf: 'center', fontSize: 30}}>{this.state.Details.title}</Text>
                     </View>
-                    <Divider />
+
+                    <Divider style={{width: '80%', alignSelf: 'center', backgroundColor: 'black'}} />
 
                     <View style={[{padding: 30}, Styles.containerRow]}>
                         <View style={{ margin: 10 }}>

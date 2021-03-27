@@ -21,6 +21,7 @@ import {
     } from 'react-native-elements';
 import {Styles} from './functions/styles'
 import Geocoder from 'react-native-geocoding';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Feeds extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ export default class Feeds extends Component {
     };
   }
 
-    componentDidMount() {
+  componentDidMount() {
     request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
         if (result === 'granted') {
             Geolocation.getCurrentPosition(
@@ -73,8 +74,6 @@ export default class Feeds extends Component {
         });
   }
 
-  apply = () => {}
-
   render() {
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
@@ -90,7 +89,7 @@ export default class Feeds extends Component {
                                   />
                                   <ListItem.Content>
                                       <ListItem.Title>{item.title}</ListItem.Title>
-                                      <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+                                      <ListItem.Subtitle>{item.job}, {item.location}</ListItem.Subtitle>
                                   </ListItem.Content>
                                   <ListItem.Chevron />
                               </ListItem>
@@ -108,73 +107,269 @@ export class FeedDetails extends Component {
   constructor(props){
       super(props);
       this.state = {
-          Details: {},
+        Details: {},
       };
   }
 
   componentDidMount(){
-      const { Details } = this.props.route.params;
-      this.initializeDetails(Details);
+    const { Details } = this.props.route.params;
+    this.initializeDetails(Details);
+  }
+
+initializeDetails(Details){
+    this.setState({Details});
+    AsyncStorage.getItem('user').then(user=>{
+      this.setState({user});
+    });
+}
+
+  render(){
+    const { Details } = this.props.route.params;
+    if (Details.job === 'Vacancy') {
+      return (<VacancyDetails details={this.state.Details} />);
+    } else if (Details.job === 'Appeal') {
+      return (<AppealDetails details={this.state.Details} />);
+    }
+  }
+
+}
+
+class VacancyDetails extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+        Details: {},
+        user: '',
+        disableBtn: '',
+        btnText: 'APPLY',
+    };
+    this.apply = this.apply.bind(this);
+  }
+
+  componentDidUpdate(){
+      this.initializeDetails(this.props.details);
   }
 
   initializeDetails(Details){
-      this.setState({Details});
+      AsyncStorage.getItem('user').then(user=>{
+        this.setState({user,Details});
+      });
+      this.applied();
+  }
+
+  apply(){
+    let apply = firestore().collection('Jobs');
+    let jobs = {id: this.state.Details.id, appliedUser: this.state.user, jobOwner: this.state.Details.user, job: this.state.Details.job};
+    let applied;
+    apply.doc('Applied').get().then(e=>{
+      if (e.exists) {
+        if (jobs.jobOwner !== jobs.appliedUser) {
+          applied = [...e.data().applied];
+          applied.push(jobs);
+          apply.doc('Applied').update({applied: applied}).then(res=>{
+            console.log(res);
+            this.setState({btnText: 'APPLIED', disableBtn: true});
+          });
+        }
+      } else {
+        apply.doc('Applied').set({applied: [jobs]}).then((res)=>{
+          console.log(res);
+          this.setState({btnText: 'APPLIED', disableBtn: true});
+        });
+      }
+    });
+  }
+
+  applied(){
+    let jobs = firestore().collection('Jobs');
+    jobs.doc('Applied').get().then(a=>{
+      if (a.exists) {
+        let applyed = [...a.data().applied];
+        for (let x of applyed) {
+          if (x.appliedUser === this.state.user) {
+            this.setState({btnText: 'APPLIED', disableBtn: true});
+          }
+        }
+      }
+    });
   }
 
   render(){
-      return (
-          <ScrollView style={[{backgroundColor: 'white'}]}>
-              <View>
-                  <View style={{margin: 20, padding: 10}}>
-                      <Text style={{alignSelf: 'center', fontSize: 30}}>{this.state.Details.title}</Text>
-                  </View>
-                  <Divider />
+    return (
+      <ScrollView style={[{backgroundColor: 'white'}]}>
+          <View>
+              <View style={{margin: 20, padding: 10}}>
+                  <Text style={{alignSelf: 'center', fontSize: 30}}>{this.state.Details.title}</Text>
+              </View>
 
-                  <View style={[{padding: 30}, Styles.containerRow]}>
-                      <View style={{ margin: 10 }}>
-                          <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
-                      </View>
-                      <View style={{ margin: 10 }}>
-                          <Text style={{ fontSize: 20 }}>{this.state.Details.company}</Text>
-                      </View>
-                  </View>
+              <Divider style={{width: '80%', alignSelf: 'center', backgroundColor: 'black'}} />
 
-                  <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
-                      <View style={{ margin: 10 }}>
-                          <Image source={require('./assets/img/pin.png')} style={{ width: 30, height: 30 }} />
-                      </View>
-                      <View style={{ margin: 10 }}>
-                          <Text style={{ fontSize: 20 }}>{this.state.Details.location}</Text>
-                      </View>
+              <View style={[{padding: 30}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
                   </View>
-
-                  <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
-                      <View style={{ margin: 10 }}>
-                          <Image source={require('./assets/img/full-time-job.png')} style={{ width: 30, height: 30 }} />
-                      </View>
-                      <View style={{ margin: 10 }}>
-                          <Text style={{ fontSize: 20 }}>{this.state.Details.type}</Text>
-                      </View>
-                  </View>
-                  <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
-                      <View style={{ margin: 10 }}>
-                          <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
-                      </View>
-                      <View style={{ margin: 10 }}>
-                          <Text style={{ fontSize: 20 }}>{this.state.Details.experience} Years Experience</Text>
-                      </View>
-                  </View>
-                  <View style={{ margin: 10, padding: 10 }}>
-                      <Text style={{ fontSize: 20 }}>{this.state.Details.summary}</Text>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.company}</Text>
                   </View>
               </View>
-              <Button
-                  title="APPLY"
-                  type="solid"
-                  buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
-                  //onPress={()=> this.postJob('Vacancy', this.state.vacancy)}
-              />
-          </ScrollView>
-      );
+
+              <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/pin.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.location}</Text>
+                  </View>
+              </View>
+
+              <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/full-time-job.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.type}</Text>
+                  </View>
+              </View>
+              <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.experience} Years Experience</Text>
+                  </View>
+              </View>
+              <View style={{ margin: 10, padding: 10 }}>
+                  <Text style={{ fontSize: 20 }}>{this.state.Details.summary}</Text>
+              </View>
+          </View>
+          <Button
+              title={this.state.btnText}
+              type="solid"
+              disabled={this.state.disableBtn}
+              buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+              onPress={this.apply}
+          />
+      </ScrollView>
+  );
+  }
+}
+
+class AppealDetails extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+        Details: {},
+        user: '',
+        disableBtn: '',
+        btnText: 'APPLY',
+    };
+    this.apply = this.apply.bind(this);
+  }
+
+  componentDidUpdate(){
+      this.initializeDetails(this.props.details);
+  }
+
+  initializeDetails(Details){
+      AsyncStorage.getItem('user').then(user=>{
+        this.setState({user,Details});
+      });
+      this.applied();
+  }
+
+  apply(){
+    let apply = firestore().collection('Jobs');
+    let jobs = {id: this.state.Details.id, appliedUser: this.state.user, jobOwner: this.state.Details.user, job: this.state.Details.job};
+    let applied;
+    apply.doc('Applied').get().then(e=>{
+      if (e.exists) {
+        if (jobs.jobOwner !== jobs.appliedUser) {
+          applied = [...e.data().applied];
+          applied.push(jobs);
+          apply.doc('Applied').update({applied: applied}).then(res=>{
+            console.log(res);
+            this.setState({btnText: 'APPLIED', disableBtn: true});
+          });
+        }
+      } else {
+        apply.doc('Applied').set({applied: [jobs]}).then((res)=>{
+          console.log(res);
+          this.setState({btnText: 'APPLIED', disableBtn: true});
+        });
+      }
+    });
+  }
+
+  applied(){
+    let jobs = firestore().collection('Jobs');
+    jobs.doc('Applied').get().then(a=>{
+      if (a.exists) {
+        let applyed = [...a.data().applied];
+        for (let x of applyed) {
+          if (x.appliedUser === this.state.user) {
+            this.setState({btnText: 'APPLIED', disableBtn: true});
+          }
+        }
+      }
+    });
+  }
+
+  render(){
+    return (
+      <ScrollView style={[{backgroundColor: 'white'}]}>
+          <View>
+              <View style={{margin: 20, padding: 10}}>
+                  <Text style={{alignSelf: 'center', fontSize: 30}}>{this.state.Details.title}</Text>
+              </View>
+
+              <Divider style={{width: '80%', alignSelf: 'center', backgroundColor: 'black'}} />
+
+              <View style={[{padding: 30}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.company}</Text>
+                  </View>
+              </View>
+
+              <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/pin.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.location}</Text>
+                  </View>
+              </View>
+
+              <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/full-time-job.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.type}</Text>
+                  </View>
+              </View>
+              <View style={[{padding: 30, paddingTop: 0}, Styles.containerRow]}>
+                  <View style={{ margin: 10 }}>
+                      <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
+                  </View>
+                  <View style={{ margin: 10 }}>
+                      <Text style={{ fontSize: 20 }}>{this.state.Details.experience} Years Experience</Text>
+                  </View>
+              </View>
+              <View style={{ margin: 10, padding: 10 }}>
+                  <Text style={{ fontSize: 20 }}>{this.state.Details.summary}</Text>
+              </View>
+          </View>
+          <Button
+              title={this.state.btnText}
+              type="solid"
+              disabled={this.state.disableBtn}
+              buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+              onPress={this.apply}
+          />
+      </ScrollView>
+    );
   }
 }
