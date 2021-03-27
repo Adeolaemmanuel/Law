@@ -22,7 +22,7 @@ import Message from '../Message';
 import Me, { Edit } from '../Me';
 import Law from '../Law';
 import Lawyers from '../Lawyers';
-import Jobs, {JobDetails} from '../Jobs';
+import Jobs, {Applied, JobDetails} from '../Jobs';
 import dash from '../assets/img/dashboard.png';
 import wallet from '../assets/img/wallet.png';
 import feed from '../assets/img/feed.png';
@@ -282,6 +282,11 @@ class Nav extends Component {
                 name="Profile Edit" 
                 options={{ headerTitleAlign: 'center', headerTitle: 'Edit' }} 
                 component={Edit} 
+                />
+                <Stack.Screen 
+                name="Applied" 
+                options={{ headerTitleAlign: 'center', headerTitle: 'Applied' }} 
+                component={Applied} 
                 />
             </Stack.Navigator>
         );

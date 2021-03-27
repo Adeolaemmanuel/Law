@@ -16,6 +16,7 @@ import {
      ListItem,
      Avatar,
      Divider,
+     Button,
     } from 'react-native-elements';
 import {Styles} from './functions/styles';
 
@@ -140,6 +141,81 @@ export class JobDetails extends Component {
                     <View style={{ margin: 10, padding: 10 }}>
                         <Text style={{ fontSize: 20 }}>{this.state.Details.summary}</Text>
                     </View>
+
+                    <Button
+                        title="View Applied Users"
+                        type="solid"
+                        buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+                        onPress={()=> this.props.navigation.navigate('Applied', {id: this.state.Details.id})}
+                    />
+                </View>
+            </ScrollView>
+        );
+    }
+}
+
+export class Applied extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            applied: [],
+        };
+    }
+
+    componentDidMount(){
+        this.initailizeApplied();
+    }
+
+    initailizeApplied(){
+        const { id } = this.props.route.params;
+        let apply = firestore().collection('Jobs');
+        let applied;
+        apply.doc('Applied').onSnapshot(a=>{
+            if (a.exists) {
+                applied = [...a.data().applied];
+                for (let x of applied) {
+                    if (id === x.id) {
+                        firestore().collection('Users').doc(x.appliedUser).get()
+                        .then(u=>{
+                            if (u.exists) {
+                                x.profilePicture = u.data().profilePicture;
+                                x.name = `${u.data().firstname} ${u.data().lastname}`;
+                                x.country = u.data().country;
+                                x.state = u.data().state;
+                            }
+                            this.setState({applied: [x]});
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    render(){
+        return (
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <View>
+                    {
+                        this.state.applied.map((item,i)=>{
+                            return (
+                                <Pressable key={`BtnDetails-${i}`} onPress={() => this.props.navigation.navigate('Profile', { email: item.appliedUser })}>
+                                    <Card>
+                                        <ListItem>
+                                            <Avatar
+                                                rounded
+                                                source={{ uri: item.profilePicture}}
+                                            />
+                                            <ListItem.Content>
+                                                <ListItem.Title>{item.name}</ListItem.Title>
+                                                <ListItem.Subtitle>{item.country}, {item.state}</ListItem.Subtitle>
+                                            </ListItem.Content>
+                                            <ListItem.Chevron />
+                                        </ListItem>
+                                    </Card>
+                                </Pressable>
+                            );
+                        })
+                    }
                 </View>
             </ScrollView>
         );
