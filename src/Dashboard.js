@@ -1,23 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { 
-    View, 
-    Text, 
-    ScrollView, 
-    TouchableOpacity, 
-    Image, 
-    BackHandler, 
-    Dimensions 
+import {
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+    BackHandler,
+    Dimensions,
 } from 'react-native';
 import {
     Card,
  } from 'react-native-elements';
-import Jobs from './assets/img/businessman.png';
-import Lawyer from './assets/img/lawyer.png';
-import LawBook from './assets/img/law-book.png';
-import Calender from './assets/img/schedule.png';
-import Post from './assets/img/sticky-notes.png';
-import Blog from './assets/img/blog.png';
 import { Styles } from './functions/styles';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -57,6 +51,10 @@ export default class Dashboard extends Component {
                 this.setState({ name });
             });
         });
+    }
+
+    componentWillUnmount(){
+        this.componentDidMount();
     }
 
 

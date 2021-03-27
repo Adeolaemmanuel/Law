@@ -63,6 +63,10 @@ export default class Register extends Component {
         });
     }
 
+    componentWillUnmount(){
+        this.componentDidMount();
+    }
+
     formData(data,prev,next,type){
         if (type === 'next') {
             for (let d in data) {

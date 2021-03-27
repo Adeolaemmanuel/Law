@@ -48,32 +48,47 @@ export default class Jobs extends Component {
         });
     }
 
+    componentWillUnmount(){
+        this.componentDidMount();
+    }
+
     render() {
-        return (
-            <ScrollView style={{backgroundColor: 'white'}}>
-                <View>
-                    {
-                        this.state.Jobs.map((item, i) => (
-                            <Pressable key={`BtnJobsDetails-${item.key}${i}`} onPress={() => this.props.navigation.navigate('Job Details', { Details: item })}>
-                                <Card>
-                                    <ListItem>
-                                        <Avatar
-                                            rounded
-                                            source={{ uri: item.profilePicture}}
-                                        />
-                                        <ListItem.Content>
-                                            <ListItem.Title>{item.title}</ListItem.Title>
-                                            <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
-                                        </ListItem.Content>
-                                        <ListItem.Chevron />
-                                    </ListItem>
-                                </Card>
-                            </Pressable>
-                        ))
-                    }
+        if (this.state.Jobs.length === 0) {
+            return (
+                <View style={[{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white'}, Styles.container]}>
+                    <Text style={{ fontSize: 20}}>No Jobs Posted Yet</Text>
+                    <Pressable onPress={()=> this.props.navigation.navigate('Post')}>
+                        <Text style={{color: 'blue', margin: 5}}>Post Job</Text>
+                    </Pressable>
                 </View>
-            </ScrollView>
-        );
+            );
+        } else {
+            return (
+                <ScrollView style={{backgroundColor: 'white'}}>
+                    <View>
+                        {
+                            this.state.Jobs.map((item, i) => (
+                                <Pressable key={`BtnJobsDetails-${item.key}${i}`} onPress={() => this.props.navigation.navigate('Job Details', { Details: item })}>
+                                    <Card>
+                                        <ListItem>
+                                            <Avatar
+                                                rounded
+                                                source={{ uri: item.profilePicture}}
+                                            />
+                                            <ListItem.Content>
+                                                <ListItem.Title>{item.title}</ListItem.Title>
+                                                <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+                                            </ListItem.Content>
+                                            <ListItem.Chevron />
+                                        </ListItem>
+                                    </Card>
+                                </Pressable>
+                            ))
+                        }
+                    </View>
+                </ScrollView>
+            );
+        }
     }
 }
 
@@ -88,6 +103,10 @@ export class JobDetails extends Component {
     componentDidMount(){
         const { Details } = this.props.route.params;
         this.initializeDetails(Details);
+    }
+
+    componentWillUnmount(){
+        this.componentDidMount();
     }
 
     initializeDetails(Details){
@@ -164,6 +183,10 @@ export class Applied extends Component {
 
     componentDidMount(){
         this.initailizeApplied();
+    }
+
+    componentWillUnmount(){
+        this.componentDidMount();
     }
 
     initailizeApplied(){

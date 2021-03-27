@@ -59,6 +59,10 @@ export default class Feeds extends Component {
     });
   }
 
+  componentWillUnmount(){
+    this.componentDidMount();
+  }
+
   initializeFeed(){
     let Feed;
         firestore().collection('Jobs').doc('All').onSnapshot( j => {
@@ -116,6 +120,10 @@ export class FeedDetails extends Component {
     this.initializeDetails(Details);
   }
 
+  componentWillUnmount(){
+    this.componentDidMount();
+  }
+
 initializeDetails(Details){
     this.setState({Details});
     AsyncStorage.getItem('user').then(user=>{
@@ -147,8 +155,12 @@ class VacancyDetails extends Component {
   }
 
   componentDidUpdate(){
-      this.initializeDetails(this.props.details);
+    this.initializeDetails(this.props.details);
   }
+
+  componentWillUnmount(){
+    this.componentDidMount();
+}
 
   initializeDetails(Details){
       AsyncStorage.getItem('user').then(user=>{
@@ -164,6 +176,7 @@ class VacancyDetails extends Component {
     apply.doc('Applied').get().then(e=>{
       if (e.exists) {
         if (jobs.jobOwner !== jobs.appliedUser) {
+          console.log('yes');
           applied = [...e.data().applied];
           applied.push(jobs);
           apply.doc('Applied').update({applied: applied}).then(res=>{
@@ -267,8 +280,12 @@ class AppealDetails extends Component {
   }
 
   componentDidUpdate(){
-      this.initializeDetails(this.props.details);
+    this.initializeDetails(this.props.details);
   }
+
+  componentWillUnmount(){
+    this.componentDidMount();
+}
 
   initializeDetails(Details){
       AsyncStorage.getItem('user').then(user=>{

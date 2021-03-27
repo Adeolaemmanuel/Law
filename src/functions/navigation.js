@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-trailing-spaces */
 import React, {Component} from 'react';
-import { Image, Pressable } from 'react-native';
+import { Image } from 'react-native';
 import 'react-native-gesture-handler';
 import {getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +10,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Home from '../Home';
 import Register from '../Register';
 import Feeds, {FeedDetails} from '../Feed';
-import Profile from '../Profile';
+import Profile, { Me, Edit } from '../Profile';
 import Dash from '../Dashboard';
 import Post, { Appeal, Vacancy } from '../Post';
 import Wallet from '../Wallet';
@@ -19,9 +19,7 @@ import News from '../News';
 import Calender from '../Calender';
 import Blog, { BlogPost } from '../Blog';
 import Message from '../Message';
-import Me, { Edit } from '../Me';
-import Law from '../Law';
-import Lawyers from '../Lawyers';
+import Law, { Lawyers } from '../Law';
 import Jobs, {Applied, JobDetails} from '../Jobs';
 import dash from '../assets/img/dashboard.png';
 import wallet from '../assets/img/wallet.png';
