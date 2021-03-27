@@ -25,6 +25,8 @@ export default class Login extends Component {
                 if (data.email === u.data().email && data.password === u.data().password) {
                     AsyncStorage.setItem('user', data.email)
                     this.props.navigation.push('Drawer')
+                } else {
+                    ToastAndroid.show("Wrong Email/Password", ToastAndroid.TOP);
                 }
             }
         })

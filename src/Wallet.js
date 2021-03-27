@@ -21,7 +21,7 @@ export default class Wallet extends Component {
                         <View style={Styles.cardD}>
                             <Text style={{ fontSize: 50 }}>₦ {this.state.balance}</Text>
                         </View>
-                        <View style={{ margin: 5, padding: 5 , justifyContent: 'flex-end', alignContent: 'flex-end', flexDirection: 'row' }}>
+                        <View style={{ margin: 5, padding: 5, alignSelf: 'flex-end', marginTop: 10 }}>
                             <Text style={{ fontSize: 20 }}>Adeola Emmanuel</Text>
                         </View>
                     </View>

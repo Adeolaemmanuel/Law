@@ -29,7 +29,7 @@ export default class Calender extends Component {
             )
         } else {
             return (
-                <Home modal={this.modal} />    
+                <Home modal={this.modal} />
             )
         }
     }

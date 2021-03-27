@@ -1,11 +1,20 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { View, Modal, Image, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
-import { Styles } from "./functions/styles";
+import {
+    View,
+    Image,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+     KeyboardAvoidingView,
+    ToastAndroid,
+} from 'react-native';
+import { Styles } from './functions/styles';
 import { Button } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { launchImageLibrary } from 'react-native-image-picker';
-
+import { Dimensions } from 'react-native';
 
 
 export default class Post extends Component {
@@ -13,213 +22,320 @@ export default class Post extends Component {
         super(props);
         this.state = {
             Jobs: [
-                { name: 'Vacancy', modal: false, icon: require('./assets/img/vacancy.png') },
-                { name: 'Appeal', modal: false, icon: require('./assets/img/compliant.png') },
-                { name: 'Vacancy', modal: false, icon: require('./assets/img/vacancy.png') },
-                { name: 'Vacancy', modal: false, icon: require('./assets/img/vacancy.png') },
+                { name: 'Vacancy', modal: false, icon: require('./assets/img/vacancy.png'), route: 'Vacancy' },
+                { name: 'Appeal', modal: false, icon: require('./assets/img/compliant.png'), route: 'Appeal' },
             ],
-            home: true,
-            vacancy: { title: null, position: null, salary: null, location: null, experience: null }
+        };
+    }
 
+    componentDidMount() {
+        this.getUser('vacancy', this.state.vacancy);
+        this.getUser('appeal', this.state.appeal);
+    }
+
+    getUser = async (stateData,state) => {
+        let value = await AsyncStorage.getItem('user');
+        if (value) {
+            let data = { ...state };
+            data.user = value;
+            this.setState({ [stateData]: data });
         }
     }
 
     modalOpen = (index) => {
-        const Jobs = [...this.state.Jobs]
+        const Jobs = [...this.state.Jobs];
         if (Jobs[index].modal === false) {
             Jobs[index].modal = true;
-            this.setState({ Jobs })
-            this.setState({ home: false })
+            this.setState({ Jobs });
+            this.setState({ home: false });
         } else if (Jobs[index].modal === true) {
             Jobs[index].modal = false;
-            this.setState({ Jobs })
-            this.setState({ home: true })
-        }
-    }
-
-    postJob = (type,data) => {
-        let Jobs = firestore().collection('Jobs')
-        let dataStream = { ...data, type: type }
-        for (let x in dataStream) {
-            if (dataStream.type === 'Appeal' && data[x] != "" ) {
-                
-            }
-        }
-    }
-
-    Home = (view) => {
-        if (view) {
-            return (
-                <View>
-                    <View style={Styles.containerRow}>
-                        <TouchableOpacity
-                            android_disableSound={true}
-                            style={Styles.nav}
-                            onPress={() => this.modalOpen(0)}>
-                            <Image source={this.state.Jobs[0].icon} style={Styles.image} />
-                            <Text style={Styles.navText}>{this.state.Jobs[0].name}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            android_disableSound={true}
-                            style={Styles.nav}
-                            onPress={() => this.modalOpen(1)}>
-                            <Image source={this.state.Jobs[1].icon} style={Styles.image} />
-                            <Text style={Styles.navText}>{this.state.Jobs[1].name}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            )
+            this.setState({ Jobs });
+            this.setState({ home: true });
         }
     }
 
 
-    // fore serurity reasons i advise only lincensce confirmed lawyers are allowed access
-    vacancy = (view) => {
-        if (view) {
-            return (
-                <ScrollView>
-                    <KeyboardAvoidingView>
-                        <View style={Styles.container} >
-                            <View style={Styles.containerPaddingMargin}>
-                                <View>
-                                    <TouchableOpacity style={Styles.button} onPress={() => this.modalOpen(0)}>
-                                        <Text style={[{ color: 'white' }, Styles.buttonText]}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View>
-                                    <TextInput
-                                        style={Styles.input}
-                                        placeholder="Title:"
-                                        onChangeText={
-                                            text => {
-                                                let vacancy = { ...this.state.vacancy }
-                                                vacancy.title = text
-                                                this.setState({ vacancy })
-                                            }
-                                        }
-                                    />
-                                </View>
-                                <View style={Styles.containerRow} >
-                                    <TextInput
-                                        style={[{ flex: 2 }, Styles.input]}
-                                        placeholder="Position:"
-                                        onChangeText={
-                                            text => {
-                                                let vacancy = { ...this.state.vacancy }
-                                                vacancy.position = text
-                                                this.setState({ vacancy })
-                                            }
-                                        }
-                                    />
-                                    <TextInput
-                                        style={[{ flex: 2 }, Styles.input]}
-                                        placeholder="Salary:"
-                                        onChangeText={
-                                            text => {
-                                                let vacancy = { ...this.state.vacancy }
-                                                vacancy.salary = text
-                                                this.setState({ vacancy })
-                                            }
-                                        }
-                                    />
-                                </View>
-                                <View style={Styles.containerRow} >
-                                    <TextInput
-                                        style={[{ flex: 2 }, Styles.input]}
-                                        placeholder="Location:"
-                                        onChangeText={
-                                            text => {
-                                                let vacancy = { ...this.state.vacancy }
-                                                vacancy.location = text
-                                                this.setState({ vacancy })
-                                            }
-                                        }
-                                    />
-                                    <TextInput
-                                        style={[{ flex: 2 }, Styles.input]}
-                                        placeholder="Experience:"
-                                        onChangeText={
-                                            text => {
-                                                let vacancy = { ...this.state.vacancy }
-                                                vacancy.experience = text
-                                                this.setState({ vacancy })
-                                            }
-                                        }
-                                    />
-                                </View>
-                                <View style={[{ padding: 5 }, Styles.container]}>
-                                    <TextInput
-                                        style={[{ justifyContent: 'flex-start', textAlignVertical: 'top' }, Styles.inputCustom]}
-                                        placeholder="Summary:"
-                                        multiline={true}
-                                        numberOfLines={10}
-                                        placeholderTextColor='grey'
-                                        underlineColorAndroid='transparent'
-                         
-                                    />
-                                </View>
-
-                                <Button title="Post" type="solid" buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }} />
-                            </View>
-                        </View>
-                    </KeyboardAvoidingView>
-                </ScrollView>
-            )
-        }
-    }
-
-    appeal = (view) => {
-        if (view) {
-            return (
-                <ScrollView>
-                    <KeyboardAvoidingView>
-                        <View style={Styles.container} >
-                            <View style={Styles.containerPaddingMargin}>
-                                <View>
-                                    <TouchableOpacity style={Styles.button} onPress={() => this.modalOpen(1)}>
-                                        <Text style={[{ color: 'white' }, Styles.buttonText]}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View>
-                                    <TextInput style={Styles.input} placeholder="Title:" />
-                                </View>
-                                <View>
-                                    <TextInput style={Styles.input} placeholder="Location:" />
-                                </View>
-                                <View>
-                                    <TextInput style={Styles.input} placeholder="Date:" />
-                                </View>
-                                <View>
-                                    <TextInput style={[Styles.inputCustom]} placeholder="Summary:" multiline={true} numberOfLines={5} />
-                                </View>
-
-                                <Button title="Post" type="solid" buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }} />
-                            </View>
-                        </View>
-                    </KeyboardAvoidingView>
-                </ScrollView>
-            )
-        }
-    }
 
     render() {
         return (
             <ScrollView>
-                <KeyboardAvoidingView>
-                    <View style={Styles.container}>
-                        {
-                            this.Home(this.state.home)
-                        }
-                        {
-                            this.vacancy(this.state.Jobs[0].modal)
-                        }
-                        {
-                            this.appeal(this.state.Jobs[1].modal)
-                        }
+                <View style={[{backgroundColor: 'white'}, Styles.containerRow]}>
+                    {
+                        this.state.Jobs.map((arr,ind)=>{
+                            return (
+                                <View key={`Post-${ind}`} style={{width: (Dimensions.get('screen').width - 10) / 2, height: 170, padding: 5, margin: 2}}>
+                                    <TouchableOpacity
+                                    android_disableSound={true}
+                                    style={[Styles.nav]}
+                                    onPress={() => this.props.navigation.navigate(`${arr.route}`, {[arr.route]: arr})}>
+                                    <Image source={this.state.Jobs[ind].icon} style={Styles.image} />
+                                    <Text style={Styles.navText}>{arr.name}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            );
+                        })
+                    }
                 </View>
+            </ScrollView>
+        );
+    }
+}
+
+// fore serurity reasons i advise only lincensce confirmed lawyers are allowed access
+export class Vacancy extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            vacancy: { title: null, company: null, type: null, location: null, experience: null, user: null, job: 'Vacancy', summary: null, id: 0},
+        };
+    }
+
+    componentDidMount(){
+        this.initializeVacancy();
+    }
+
+    initializeVacancy(){
+        AsyncStorage.getItem('user').then(u=>{
+            let vacancy = {...this.state.vacancy};
+            vacancy.user = u;
+            this.setState({vacancy});
+        });
+    }
+
+
+    postJob = (data) => {
+        let Jobs = firestore().collection('Jobs');
+        console.log(data);
+        for (let x in data) {
+            if (data[x] != null) {
+                Jobs.doc('All').get().then(e => {
+                    if (e.exists) {
+                        let jobs = [...e.data().all];
+                        data.id = jobs[jobs.length - 1].id + 1;
+                        jobs.unshift(data);
+                        Jobs.doc('All').update({
+                            all: jobs,
+                        }).then(()=>{
+                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
+                            data[x] = null;
+                        });
+                    } else {
+                        Jobs.doc('All').set({all: [data]}).then(()=>{
+                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
+                            data[x] = null;
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    render(){
+        return (
+            <ScrollView>
+                <KeyboardAvoidingView>
+                    <View style={Styles.container} >
+                        <View style={Styles.containerPaddingMargin}>
+                            <View>
+                                <TextInput
+                                    style={Styles.input}
+                                    placeholder="Job Title:"
+                                    onChangeText={
+                                        text => {
+                                            let vacancy = { ...this.state.vacancy };
+                                            vacancy.title = text;
+                                            this.setState({ vacancy });
+                                        }
+                                    }
+                                />
+                            </View>
+                            <View style={Styles.containerRow} >
+                                <TextInput
+                                    style={[{ flex: 2 }, Styles.input]}
+                                    placeholder="Company:"
+                                    onChangeText={
+                                        text => {
+                                            let vacancy = { ...this.state.vacancy };
+                                            vacancy.company = text;
+                                            this.setState({ vacancy });
+                                        }
+                                    }
+                                />
+                                <TextInput
+                                    style={[{ flex: 2 }, Styles.input]}
+                                    placeholder="Job Type:"
+                                    onChangeText={
+                                        text => {
+                                            let vacancy = { ...this.state.vacancy };
+                                            vacancy.type = text;
+                                            this.setState({ vacancy });
+                                        }
+                                    }
+                                />
+                            </View>
+                            <View style={Styles.containerRow} >
+                                <TextInput
+                                    style={[{ flex: 2 }, Styles.input]}
+                                    placeholder="Location:"
+                                    onChangeText={
+                                        text => {
+                                            let vacancy = { ...this.state.vacancy };
+                                            vacancy.location = text;
+                                            this.setState({ vacancy });
+                                        }
+                                    }
+                                />
+                                <TextInput
+                                    style={[{ flex: 2 }, Styles.input]}
+                                    placeholder="Experience:"
+                                    onChangeText={
+                                        text => {
+                                            let vacancy = { ...this.state.vacancy };
+                                            vacancy.experience = text;
+                                            this.setState({ vacancy });
+                                        }
+                                    }
+                                />
+                            </View>
+                            <View style={[{ padding: 5 }, Styles.container]}>
+                                <TextInput
+                                    style={[{ justifyContent: 'flex-start', textAlignVertical: 'top', backgroundColor: '#ebedf0' }, Styles.inputCustom]}
+                                    placeholder="Job details and reqirements:"
+                                    multiline={true}
+                                    numberOfLines={3}
+                                    onChangeText={
+                                        text => {
+                                            let vacancy = { ...this.state.vacancy };
+                                            vacancy.summary = text;
+                                            this.setState({ vacancy });
+                                        }
+                                    }
+                                />
+                            </View>
+                        </View>
+
+                        <Button
+                            title="Post"
+                            type="solid"
+                            buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+                            onPress={()=> this.postJob(this.state.vacancy)}
+                        />
+                    </View>
                 </KeyboardAvoidingView>
             </ScrollView>
         );
     }
 }
 
+export class Appeal extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            appeal: { title: null, location: null, date: null, summary: null, user: null, job: 'Appeal', id: 0 },
+        };
+    }
+
+    componentDidMount(){
+        AsyncStorage.getItem('user').then(u=>{
+            let appeal = {...this.state.appeal};
+            appeal.user = u;
+            this.setState({appeal});
+        });
+    }
+
+    postJob = (data) => {
+        let Jobs = firestore().collection('Jobs');
+        for (let x of data) {
+            if (data[x] !== null) {
+                Jobs.doc('All').get().then(e => {
+                    if (e.exists) {
+                        let jobs = [...e.data().all];
+                        data.id = jobs[jobs.length - 1].id + 1;
+                        jobs.unshift(data);
+                        Jobs.doc('All').update({
+                            all: jobs,
+                        }).then(()=>{
+                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
+                            data[x] = null;
+                        });
+                    } else {
+                        Jobs.doc('All').set({all: [data]}).then(()=>{
+                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
+                            data[x] = null;
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    render(){
+        return (
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <KeyboardAvoidingView>
+                    <View style={Styles.container} >
+                        <View style={Styles.containerPaddingMargin}>
+                            <View>
+                                <TextInput
+                                    style={Styles.input}
+                                    placeholder="Title:"
+                                    onChangeText={
+                                        text => {
+                                            let appeal = { ...this.state.appeal };
+                                            appeal.title = text;
+                                            this.setState({ appeal });
+                                        }
+                                    }
+                                />
+                            </View>
+                            <View>
+                                <TextInput
+                                    style={Styles.input}
+                                    placeholder="Location:"
+                                    onChangeText={
+                                        text => {
+                                            let appeal = { ...this.state.appeal };
+                                            appeal.location = text;
+                                            this.setState({ appeal });
+                                        }
+                                    }
+                                />
+                            </View>
+                            <View>
+                                <TextInput
+                                    style={Styles.input}
+                                    placeholder="Date:"
+                                    onChangeText={
+                                        text => {
+                                            let appeal = { ...this.state.appeal };
+                                            appeal.date = text;
+                                            this.setState({ appeal });
+                                        }
+                                    }
+                                />
+                            </View>
+                            <View style={[{ padding: 5 }, Styles.container]}>
+                                <TextInput
+                                    style={[{ textAlignVertical: 'top', backgroundColor: '#ebedf0' }, Styles.inputCustom]}
+                                    placeholder="Summary:"
+                                    multiline={true}
+                                    numberOfLines={3}
+                                    underlineColorAndroid="transparent"
+
+                                />
+                            </View>
+
+                            <Button
+                                title="Post"
+                                type="solid"
+                                buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+                                onPress={()=> this.postJob(this.state.appeal)}
+                            />
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+            </ScrollView>
+        );
+    }
+}

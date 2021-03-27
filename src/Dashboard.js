@@ -1,6 +1,17 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { View, Text, Stylesheet, ScrollView, TouchableOpacity, Image, BackHandler, } from 'react-native';
-import { Card } from 'react-native-elements';
+import { 
+    View, 
+    Text, 
+    ScrollView, 
+    TouchableOpacity, 
+    Image, 
+    BackHandler, 
+    Dimensions 
+} from 'react-native';
+import {
+    Card,
+ } from 'react-native-elements';
 import Jobs from './assets/img/businessman.png';
 import Lawyer from './assets/img/lawyer.png';
 import LawBook from './assets/img/law-book.png';
@@ -17,15 +28,23 @@ export default class Dashboard extends Component {
         super(props);
         this.state = {
             name: null,
+            Nav: [
+                {name: 'Jobs', image: require('./assets/img/businessman.png'), route: 'Jobs' },
+                {name: 'Post Jobs', image: require('./assets/img/sticky-notes.png'), route: 'Post' },
+                {name: 'Calendar', image: require('./assets/img/schedule.png'), route: 'Calender' },
+                {name: 'Lawyer', image: require('./assets/img/lawyer.png'), route: 'Lawyers' },
+                {name: 'Law', image: require('./assets/img/law-book.png'), route: 'Law' },
+                {name: 'Blog', image: require('./assets/img/blog.png'), route: 'Blog' },
+            ],
         };
     }
 
     componentDidMount() {
 
         BackHandler.addEventListener(
-            "hardwareBackPress",
+            'hardwareBackPress',
             () => {
-                return true
+                return true;
             }
         );
 
@@ -34,17 +53,17 @@ export default class Dashboard extends Component {
         AsyncStorage.getItem('user').then(u => {
             user.doc(u).onSnapshot(e => {
                 let name = `Welcome! ${e.data().firstname} ${e.data().lastname}`;
-                let email = e.data().email
-                this.setState({ name })
-            })
-        })
+                let email = e.data().email;
+                this.setState({ name });
+            });
+        });
     }
 
 
     render() {
         return (
             <ScrollView>
-                <View style={Styles.container}>
+                <View style={[{backgroundColor: 'white'}, Styles.container]}>
                     <Card>
                         <View style={Styles.container}>
                             <View>
@@ -52,35 +71,19 @@ export default class Dashboard extends Component {
                             </View>
                         </View>
                     </Card>
-                    <View style={Styles.containerRow}>
-                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Jobs')}>
-                            <Image style={Styles.image} source={Jobs} />
-                            <Text style={Styles.navText}>Jobs</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Post')}>
-                            <Image style={Styles.image} source={Post} />
-                            <Text style={Styles.navText}>Post Jobs</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={Styles.containerRow}>
-                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Calender')}>
-                            <Image style={Styles.image} source={Calender} />
-                            <Text style={Styles.navText}>Calendar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Lawyers')}>
-                            <Image style={Styles.image} source={Lawyer} />
-                            <Text style={Styles.navText}>Lawyers</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={Styles.containerRow}>
-                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate('Law')}>
-                            <Image style={Styles.image} source={LawBook} />
-                            <Text style={Styles.navText}>Law</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity  style={Styles.nav}  onPress={()=> this.props.navigation.navigate('Blog')}>
-                            <Image style={Styles.image} source={Blog} />
-                            <Text style={Styles.navText}>Blog</Text>
-                        </TouchableOpacity>
+                    <View style={[{backgroundColor: 'white'}, Styles.containerRow]}>
+                        {
+                            this.state.Nav.map((arr,ind)=>{
+                                return (
+                                    <View key={`dashboard-${ind}`} style={{width: (Dimensions.get('screen').width - 30) / 2, height: 160, padding: 5, margin: 7, marginTop: 0, paddingTop: 0}}>
+                                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate(`${arr.route}`)}>
+                                        <Image style={Styles.image} source={arr.image} />
+                                        <Text style={Styles.navText}>{arr.name}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                );
+                            })
+                        }
                     </View>
                 </View>
             </ScrollView>

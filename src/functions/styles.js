@@ -59,10 +59,7 @@ const Styles = StyleSheet.create({
     containerRow: {
         flex: 1,
         flexDirection: 'row',
-    },
-    homeContainer: {
-        flex: 1,
-        flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     input: {
         height: 70,
@@ -75,7 +72,6 @@ const Styles = StyleSheet.create({
         fontSize: 20,
     },
     inputCustom: {
-        backgroundColor: 'white',
         borderWidth: 1,
         borderRadius: 5,
         margin: 10,
@@ -113,12 +109,6 @@ const Styles = StyleSheet.create({
         borderRadius: 3,
         height: 40,
     },
-    summary: {
-        width: '95%',
-        alignSelf: 'center',
-        backgroundColor: 'white',
-        borderRadius: 3,
-    },
     dates: {
         width: 170,
         height: 40,
@@ -143,7 +133,7 @@ const Styles = StyleSheet.create({
     },
     nav: {
         flex: 1,
-        height: 150,
+        height: 130,
         padding: 10,
         borderRadius: 5,
         margin: 10,
@@ -153,7 +143,7 @@ const Styles = StyleSheet.create({
         alignSelf: 'stretch',
         backgroundColor: 'white',
         marginTop: 20,
-        elevation: 5
+        elevation: 5,
         //backgroundColor: '#161b22',
 
     },
@@ -168,8 +158,8 @@ const Styles = StyleSheet.create({
         marginTop: 10,
     },
     image: {
-        width: 90,
-        height: 90,
+        width: 70,
+        height: 70,
         padding: 10,
         alignSelf: 'center',
     },
@@ -229,9 +219,6 @@ const Styles = StyleSheet.create({
         flex: 1.5,
         height: 150,
         margin: 8,
-    },
-    body: {
-        flex: 2,
     },
     heading: {
         backgroundColor: 'black',

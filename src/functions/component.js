@@ -21,14 +21,14 @@ class SearchCenterHeaderModule extends Component {
         return (
             <View style={[{ backgroundColor: 'white', elevation: 5, shadowColor: 'black', shadowOffset: { width: 15, height: 15 }, shadowOpacity: 1, }, Styles.containerRow]}>
                 <Pressable onPress={() => this.props.navigation.goBack()}>
-                    <Image style={{ flex: 1, width: 20, height: 20, padding: 10, margin: 10, marginTop: 25 }} source={require('../assets/img/left-arrow.png')} />
+                    <Image style={{ flex: 1, width: 20, height: 20, padding: 10, margin: 10, marginTop: 23 }} source={require('../assets/img/left-arrow.png')} />
                 </Pressable>
                 <TextInput
                     placeholder='Search User...'
                     style={[{ fontSize: 20, padding: 10, margin: 10, flex: 2, backgroundColor: '#ebedf0', borderRadius: 2 }]}
                     onChangeText={text => this.changeText(text)}
                 />
-            </View>    
+            </View>
         )
     }
 }
@@ -66,7 +66,7 @@ class ImageGallerySelectModule extends Component {
                 {
                     this.visible()
                 }
-            </View>    
+            </View>
         )
     }
 }
@@ -74,5 +74,4 @@ class ImageGallerySelectModule extends Component {
 
 export {
     SearchCenterHeaderModule,
-    ImageGallerySelectModule
 }

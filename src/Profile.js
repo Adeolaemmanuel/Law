@@ -1,17 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
     View,
     Text,
-    TextInput,
     TouchableOpacity,
-    KeyboardAvoidingView,
     BackHandler,
     Image,
     ScrollView,
-    ToastAndroid,
-    Pressable,
 } from 'react-native';
-import { NavigationAction } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from './functions/styles';
@@ -23,43 +19,43 @@ export default class Profile extends Component {
         super(props);
         this.state = {
             me: {
-                firstname: " ", country: " ", lastname: " ", email: " ",
-                state: " ", university: " ", start: " ", number: " ",
-                end: " ", experience: " ", degree: " ", certificate: " ",
-                licenceNo: " ", company: " ", workStart: " ", workEnd: " "
+                firstname: ' ', country: ' ', lastname: ' ', email: ' ',
+                state: ' ', university: ' ', start: ' ', number: ' ',
+                end: ' ', experience: ' ', degree: ' ', certificate: ' ',
+                licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ', gender: ' ',
             },
             home: true,
             edit: false,
             Images: [],
             visible: false,
-            profilePic: null
+            profilePic: null,
         };
     }
 
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', () => { return true });
+        BackHandler.addEventListener('hardwareBackPress', () => { return true;});
         const { email } = this.props.route.params;
         let user = firestore().collection('Users');
-        user.doc(email).onSnapshot(user => {
-            if (user.exists) {
-                let me = { ...this.state.me }
-                me.firstname = user.data().firstname
-                me.lastname = user.data().lastname
-                me.country = user.data().country
-                me.state = user.data().state
-                me.university = user.data().education
-                me.start = user.data().start
-                me.end = user.data().end
-                me.degree = user.data().degree
-                me.certificate = user.data().certificate
-                me.experience = user.data().experience
-                me.number = user.data().number
-                me.licenceNo = user.data().licenceNo
-                me.company = user.data().company
-                me.email = user.data().email
-                me.gender = user.data().gender
+        user.doc(email).onSnapshot( users => {
+            if (users.exists) {
+                let me = { ...this.state.me };
+                me.firstname = users.data().firstname;
+                me.lastname = users.data().lastname;
+                me.country = users.data().country;
+                me.state = users.data().state;
+                me.university = users.data().education;
+                me.start = users.data().start;
+                me.end = users.data().end;
+                me.degree = users.data().degree;
+                me.certificate = users.data().certificate;
+                me.experience = users.data().experience;
+                me.number = users.data().number;
+                me.licenceNo = users.data().licenceNo;
+                me.company = users.data().company;
+                me.email = users.data().email;
+                me.gender = users.data().gender;
 
-                let profilePic = user.data().profilePicture
+                let profilePic = user.data().profilePicture;
                 if (me.gender === 'Male' && profilePic === undefined) {
                     profilePic = require('./assets/img/profileM.png')
                     this.setState({ profilePic })
@@ -72,25 +68,30 @@ export default class Profile extends Component {
 
                 for (let x in me) {
                     if (me[x] === undefined) {
-                        me[x] = 'none'
+                        me[x] = 'none';
                     }
                 }
-                this.setState({ me })
-                let checl = typeof profilePic
-                console.log(this.state.profilePic)
+                this.setState({ me });
             }
-        })
+        });
 
+
+    }
+
+    user = firestore().collection('Users')
+    follow = firestore().collection('Follows')
+
+    profileButtonHandler = (type, data) => {
 
     }
 
     render() {
         return (
-            <ScrollView>
-                <View style={Styles.containerRow}>
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <View  style={[Styles.containerRow]}>
                     <View style={Styles.profileIamge}>
                         <Image
-                            source={typeof this.state.profilePic == 'number' ? this.state.profilePic : { uri: this.state.profilePic }}
+                            source={typeof this.state.profilePic === 'number' ? this.state.profilePic : { uri: this.state.profilePic }}
                             style={{ width: 150, height: 150, margin: 10 }} />
                     </View>
 
@@ -191,41 +192,34 @@ export default class Profile extends Component {
                 </View>
 
                 <View style={[Styles.container]}>
-                    <Text style={Styles.heading}>WORK</Text>
-                    <View style={Styles.containerRow}>
-                        <View style={{ margin: 10 }}>
-                            <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
+                        <Text style={Styles.heading}>WORK</Text>
+                        <View style={Styles.containerRow}>
+                            <View style={{ margin: 10 }}>
+                                <Image source={require('./assets/img/increase.png')} style={{ width: 30, height: 30 }} />
+                            </View>
+                            <View style={{ margin: 10 }}>
+                                <Text style={{ fontSize: 20 }}>{this.state.me.experience} Years Experience</Text>
+                            </View>
                         </View>
-                        <View style={{ margin: 10 }}>
-                            <Text style={{ fontSize: 20 }}>{this.state.me.experience} Years Experience</Text>
+                        <View style={Styles.containerRow}>
+                            <View style={{ margin: 10 }}>
+                                <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
+                            </View>
+                            <View style={{ margin: 10 }}>
+                                <Text style={{ fontSize: 20 }}>{this.state.me.company}</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={Styles.containerRow}>
-                        <View style={{ margin: 10 }}>
-                            <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
-                        </View>
-                        <View style={{ margin: 10 }}>
-                            <Text style={{ fontSize: 20 }}>{this.state.me.email}</Text>
-                        </View>
-                    </View>
-                    <View style={Styles.containerRow}>
-                        <View style={{ margin: 10 }}>
-                            <Image source={require('./assets/img/diploma.png')} style={{ width: 30, height: 30 }} />
-                        </View>
-                        <View style={{ margin: 10 }}>
-                            <Text style={{ fontSize: 20 }}>{this.state.me.country}</Text>
-                        </View>
-                    </View>
-                    <View style={Styles.containerRow}>
-                        <View style={{ margin: 10 }}>
-                            <Image source={require('./assets/img/document.png')} style={{ width: 30, height: 30 }} />
-                        </View>
-                        <View style={{ margin: 10 }}>
-                            <Text style={{ fontSize: 20 }}>{this.state.me.state}</Text>
+                        <View style={Styles.containerRow}>
+                            <View style={{ margin: 10 }}>
+                                <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
+                            </View>
+                            <View style={{ margin: 10 }}>
+                            <Text style={{ fontSize: 20 }}>{`${this.state.me.workStart} - ${this.state.me.workEnd}`}</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
+
             </ScrollView>
-        )
+        );
     }
 }

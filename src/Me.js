@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
     View,
@@ -9,14 +10,13 @@ import {
     Image,
     ScrollView,
     ToastAndroid,
-    Pressable,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from './functions/styles';
-import { Overlay } from 'react-native-elements';
 import storage from '@react-native-firebase/storage';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { Button } from 'react-native-elements';
 
 
 
@@ -25,63 +25,68 @@ export default class Me extends Component {
     super(props);
       this.state = {
           me: {
-              firstname: " ", country: " ",lastname: " ", email: " ",
-              state: " ", university: " ", start: " ", number: " ",
-              end: " ", experience: " ", degree: " ", certificate: " ",
-              licenceNo: " ", company: " ", workStart: " ", workEnd: " "
+              firstname: ' ', country: ' ',lastname: ' ', email: ' ',
+              state: ' ', university: ' ', start: ' ', number: ' ',
+              end: ' ', experience: ' ', degree: ' ', certificate: ' ',
+              licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ',
+              followers: 0, following: 0,
           },
           home: true,
           edit: false,
           Images: [],
-          visible: false,
-          profilePic: null
+          profilePic: null,
       };
   }
 
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', () => { return true });
+        BackHandler.addEventListener('hardwareBackPress', () => { return true});
 
         AsyncStorage.getItem('user').then(res => {
             let user = firestore().collection('Users');
-            user.doc(res).onSnapshot(user => {
+            // eslint-disable-next-line no-shadow
+            user.doc(res).onSnapshot( user => {
                 if (user.exists) {
                     let me = { ...this.state.me }
-                    me.firstname = user.data().firstname
-                    me.lastname = user.data().lastname
-                    me.country = user.data().country
-                    me.state = user.data().state
-                    me.university = user.data().education
-                    me.start = user.data().start
-                    me.end = user.data().end
-                    me.degree = user.data().degree
-                    me.certificate = user.data().certificate
-                    me.experience = user.data().experience
-                    me.number = user.data().number
-                    me.licenceNo = user.data().licenceNo
-                    me.company = user.data().company
-                    me.email = user.data().email
-                    me.gender = user.data().gender
+                    me.firstname = user.data().firstname;
+                    me.lastname = user.data().lastname;
+                    me.country = user.data().country;
+                    me.state = user.data().state;
+                    me.university = user.data().education;
+                    me.start = user.data().start;
+                    me.end = user.data().end;
+                    me.degree = user.data().degree;
+                    me.certificate = user.data().certificate;
+                    me.experience = user.data().experience;
+                    me.number = user.data().number;
+                    me.licenceNo = user.data().licenceNo;
+                    me.company = user.data().company;
+                    me.email = user.data().email;
+                    me.gender = user.data().gender;
+                    me.following = user.data().following;
+                    me.followers = user.data().followers;
+                    me.workStart = user.data().workStart;
+                    me.workEnd = user.data().workEnd;
 
-                    let profilePic = user.data().profilePicture
-                    if (me.gender === 'Male' && profilePic === undefined) {
+                    let profilePic = user.data().profilePicture;
+                    if (me.gender.substr(0,1) === 'M' && profilePic === undefined) {
                         profilePic = require('./assets/img/profileM.png')
-                        this.setState({ profilePic })
-                    } else if (me.gender === 'Female' && profilePic === undefined) {
-                        profilePic = require('./assets/img/profileW.png')
-                        this.setState({ profilePic })
+                        this.setState({ profilePic });
+                    } else if (me.gender.substr(0, 1) === 'F' && profilePic === undefined) {
+                        profilePic = require('./assets/img/profileW.png');
+                        this.setState({ profilePic });
                     } else {
-                        this.setState({ profilePic })
+                        this.setState({ profilePic });
                     }
 
                     for (let x in me) {
                         if (me[x] === undefined) {
-                            me[x] = 'none'
+                            me[x] = 'none';
                         }
                     }
-                    this.setState({ me })
+                    this.setState({ me });
                 }
-            })
-        })
+            });
+        });
 
 
     }
@@ -89,12 +94,12 @@ export default class Me extends Component {
     switch = () => {
         if (this.state.home === true) {
             let edit = true;
-            let home = false
-            this.setState({ edit, home })
+            let home = false;
+            this.setState({ edit, home });
         } else {
             let edit = false;
             let home = true;
-            this.setState({ edit, home })
+            this.setState({ edit, home });
         }
     }
 
@@ -103,16 +108,17 @@ export default class Me extends Component {
         let user = firestore().collection('Users');
         AsyncStorage.getItem('user').then(res => {
             user.doc(res).update(this.state.me).then(() => {
-                ToastAndroid.show('Profile Updated', ToastAndroid.TOP)
-            })
-        })
+                ToastAndroid.show('Profile Updated', ToastAndroid.TOP);
+                this.switch();
+            });
+        });
     }
 
     upload = () => {
         launchImageLibrary('photo', img => {
-            let profilePic = img.uri
-            this.setState({ profilePic })
-            let user = firestore().collection('Users')
+            let profilePic = img.uri;
+            this.setState({ profilePic });
+            let user = firestore().collection('Users');
 
             AsyncStorage.getItem('user').then(d => {
                 if (d != null) {
@@ -120,26 +126,26 @@ export default class Me extends Component {
                     reference.putFile(img.uri).then(() => {
                         reference.getDownloadURL().then(i => {
                             user.doc(d).update({
-                                profilePicture: i
+                                profilePicture: i,
                             }).then(() => {
-                                ToastAndroid.show("Profile Picture Updated", ToastAndroid.TOP);
-                            })
-                        })
+                                ToastAndroid.show('Profile Picture Updated', ToastAndroid.TOP);
+                            });
+                        });
 
-                    })
+                    });
                 }
-            })
-        })
+            });
+        });
     }
 
-    home = () => {
+    HomeComponent = () => {
         if (this.state.home) {
             return (
                 <>
                     <View style={Styles.containerRow}>
                         <View style={Styles.profileIamge}>
                             <Image
-                                source={typeof this.state.profilePic == 'number' ? this.state.profilePic : { uri: this.state.profilePic }} 
+                                source={typeof this.state.profilePic === 'number' ? this.state.profilePic : { uri: this.state.profilePic }}
                                 style={{ width: 150, height: 150, margin: 10 }} />
                         </View>
 
@@ -156,6 +162,17 @@ export default class Me extends Component {
                             >
                                 <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, padding: 10 }}>Upload</Text>
                             </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View style={[{ margin: 10, padding: 10 }, Styles.containerRow]}>
+                        <View style={{ flex: 1, height: 50, padding: 10, margin: 10 }}>
+                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>Followers</Text>
+                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>{this.state.followers}</Text>
+                        </View>
+                        <View style={{ flex: 1, height: 50, padding: 10, margin: 10 }}>
+                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>Following</Text>
+                            <Text style={{ fontSize: 20, alignSelf: 'center' }}>{this.state.following}</Text>
                         </View>
                     </View>
 
@@ -251,44 +268,33 @@ export default class Me extends Component {
                         </View>
                         <View style={Styles.containerRow}>
                             <View style={{ margin: 10 }}>
+                                <Image source={require('./assets/img/company.png')} style={{ width: 30, height: 30 }} />
+                            </View>
+                            <View style={{ margin: 10 }}>
+                                <Text style={{ fontSize: 20 }}>{this.state.me.company}</Text>
+                            </View>
+                        </View>
+                        <View style={Styles.containerRow}>
+                            <View style={{ margin: 10 }}>
                                 <Image source={require('./assets/img/calendar.png')} style={{ width: 30, height: 30 }} />
                             </View>
                             <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.email}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/diploma.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.country}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.containerRow}>
-                            <View style={{ margin: 10 }}>
-                                <Image source={require('./assets/img/document.png')} style={{ width: 30, height: 30 }} />
-                            </View>
-                            <View style={{ margin: 10 }}>
-                                <Text style={{ fontSize: 20 }}>{this.state.me.state}</Text>
+                            <Text style={{ fontSize: 20 }}>{`${this.state.me.workStart} - ${this.state.me.workEnd}`}</Text>
                             </View>
                         </View>
                     </View>
                 </>
-            )
+            );
         }
     }
 
-    edit = () => {
+    EditComponent = () => {
         if (this.state.edit) {
             return (
                 <View style={Styles.container}>
                     <View>
-                        <TouchableOpacity
-                            style={[{ width: '95%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                            onPress={this.switch}
-                        >
-                            <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, margin: 10 }}>Close</Text>
+                        <TouchableOpacity style={{ alignSelf: 'center', margin: 10 }} onPress={this.switch}>
+                            <Image source={require('./assets/img/cancel.png')} style={{ width: 30, height: 30 }} />
                         </TouchableOpacity>
                     </View>
 
@@ -296,57 +302,57 @@ export default class Me extends Component {
 
                     <View style={Styles.containerRow}>
                         <TextInput
-                            placeholder='Firstname:'
+                            placeholder="Firstname:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.firstname}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.firstname = text
-                                this.setState({me})
+                                me.firstname = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({me});
                             }}
                         />
                         <TextInput
-                            placeholder='Lastname:'
+                            placeholder="Lastname:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.lastname}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.lastname = text
-                                this.setState({ me })
+                                me.lastname = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.containerRow}>
                         <TextInput
-                            placeholder='Country:'
+                            placeholder="Country:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.country}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.country = text
-                                this.setState({ me })
+                                me.country = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ me });
                             }}
                         />
                         <TextInput
-                            placeholder='State:'
+                            placeholder="State:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.state}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.state = text
-                                this.setState({ me })
+                                me.state = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.container}>
                         <TextInput
-                            placeholder='Phone Number:'
+                            placeholder="Phone Number:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.number}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.number = text
-                                this.setState({ me })
+                                me.number = text;
+                                this.setState({ me });
                             }}
                         />
                     </View>
@@ -355,70 +361,70 @@ export default class Me extends Component {
 
                     <View style={Styles.container}>
                         <TextInput
-                            placeholder='University:'
+                            placeholder="University:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.university}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.university = text
-                                this.setState({ me })
+                                me.university = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.container}>
                         <TextInput
-                            placeholder='Degree:'
+                            placeholder="Degree:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.degree}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.degree = text
-                                this.setState({ me })
+                                me.degree = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.containerRow}>
                         <TextInput
-                            placeholder='Start:'
+                            placeholder="Start:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.start}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.start = text
-                                this.setState({ me })
+                                me.start = text;
+                                this.setState({ me });
                             }}
                         />
                         <TextInput
-                            placeholder='End:'
+                            placeholder="End:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.end}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.end = text
-                                this.setState({ me })
+                                me.end = text;
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.container}>
                         <TextInput
-                            placeholder='Certificate:'
+                            placeholder="Certificate:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.certificate}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.certificate = text
-                                this.setState({ me })
+                                me.certificate = text;
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <TextInput
-                        placeholder='Lincence No:'
+                        placeholder="Lincence No:"
                         style={[{ flex: 1 }, Styles.input]}
                         value={this.state.me.licenceNo}
                         onChangeText={text => {
                             let me = { ...this.state.me };
-                            me.licenceNo = text
-                            this.setState({ me })
+                            me.licenceNo = text;
+                            this.setState({ me });
                         }}
                     />
 
@@ -426,102 +432,70 @@ export default class Me extends Component {
 
                     <View style={Styles.containerRow}>
                         <TextInput
-                            placeholder='Experience:'
+                            placeholder="Experience:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.experience}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.experience = text
-                                this.setState({ me })
+                                me.experience = text;
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.containerRow}>
                         <TextInput
-                            placeholder='Company:'
+                            placeholder="Company:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.company}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.company = text
-                                this.setState({ me })
+                                me.company = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ me });
                             }}
                         />
                     </View>
                     <View style={Styles.containerRow}>
                         <TextInput
-                            placeholder='Start:'
+                            placeholder="Start:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.workStart}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.workStart = text
-                                this.setState({ me })
+                                me.workStart = text;
+                                this.setState({ me });
                             }}
                         />
                         <TextInput
-                            placeholder='End:'
+                            placeholder="End:"
                             style={[{ flex: 1 }, Styles.input]}
                             value={this.state.me.workEnd}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
-                                me.workEnd = text
-                                this.setState({ me })
+                                me.workEnd = text;
+                                this.setState({ me });
                             }}
                         />
                     </View>
-                    <View>
-                        <TouchableOpacity
-                            style={[{ width: '95%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
+                    <Button
+                            title="Update"
+                            type="solid"
+                            buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
                             onPress={this.update}
-                        >
-                            <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, margin: 10 }}>Update</Text>
-                        </TouchableOpacity>
-                    </View>
+                        />
                 </View>
-            )
+            );
         }
-    }
-
-    toggleOverlay = () => {
-        let visible = false;
-        this.setState({ visible })
-    }
-
-
-
-    getGallarey = () => {
-        return (
-            <View>
-                <Overlay isVisible={this.state.visible} onBackdropPress={this.toggleOverlay} style={{ width: 300 }}>
-                    <View>
-                        {
-                            this.state.Images.map(arr => {
-                                return (
-                                    <Pressable onPress={() => this.getImage(arr)} style={[{ margin: 10, marginLeft: 10 }]}>
-                                        <Image key={arr} source={{ uri: arr.node.image.uri }} style={{ height: 100, width: 100, }} />
-                                    </Pressable>
-                                )
-                            })
-                        }
-                    </View>
-                </Overlay>
-            </View>
-        )
     }
 
     render() {
         return (
-            <ScrollView>
+            <ScrollView  style={[{backgroundColor: 'white'}, Styles.container]}>
                 <KeyboardAvoidingView>
                     {
-                        this.home()
+                        this.HomeComponent()
                     }
                     {
-                        this.edit()
-                    }
-                    {
-                        this.getGallarey()
+                        this.EditComponent()
                     }
                 </KeyboardAvoidingView>
             </ScrollView>

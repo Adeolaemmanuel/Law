@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "675503894594",
+    "project_id": "law-legal-e067b",
+    "storage_bucket": "law-legal-e067b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675503894594:android:b5b6ce332a7602832b3ddb",
+        "android_client_info": {
+          "package_name": "com.neutron360.law"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675503894594-4hoadbm4ad9lfhd3v0k5qom75g8h51fq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASiq5ESTqAv1e2qhBMPF-8rxVquioI4Ng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675503894594-4hoadbm4ad9lfhd3v0k5qom75g8h51fq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+    //Debug: SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+    //DebugTest: SHA1: 5E: 8F: 16: 06: 2E: A3: CD: 2C: 4A: 0D: 54: 78: 76: BA: A6: F3: 8C: AB: F6: 25
