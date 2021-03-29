@@ -1,35 +1,49 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { View, Stylesheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Button } from 'react-native-elements';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+    View,
+    Text,
+    TextInput,
+    ToastAndroid,
+ } from 'react-native';
+import { Button } from 'react-native-elements';
 
 
-export default class Login extends Component {
-    constructor(props) {
+interface LoginProps {
+    navigation: any
+}
+
+interface LoginState {
+    email: string
+    password: string
+}
+export default class Login extends Component<LoginProps, LoginState> {
+    constructor(props: any) {
         super(props);
         this.state = {
-            email: null,
-            password: null
+            email: '',
+            password: '',
         };
     }
 
 
-    Admin = firestore().collection('Admin')
-    Users = firestore().collection('Users')
-    Login = (data) => {
-        console.log(data)
-        this.Users.doc(data.email).get().then(u => {
+    Admin = firestore().collection('Admin');
+    Users = firestore().collection('Users');
+    Login = (data: any) => {
+        console.log(data);
+        this.Users.doc(data.email).get().then( (u: any) => {
             if (u.exists) {
                 if (data.email === u.data().email && data.password === u.data().password) {
-                    AsyncStorage.setItem('user', data.email)
-                    this.props.navigation.push('Drawer')
+                    AsyncStorage.setItem('user', data.email);
+                    this.props.navigation.push('Drawer');
                 } else {
-                    ToastAndroid.show("Wrong Email/Password", ToastAndroid.TOP);
+                    ToastAndroid.show('Wrong Email/Password', ToastAndroid.TOP);
                 }
             }
-        })
+        });
     }
 
     render() {
@@ -44,7 +58,7 @@ export default class Login extends Component {
                         keyboardType="email-address"
                         onChangeText={
                             email => {
-                                this.setState({ email })
+                                this.setState({ email });
                             }
                         }
                     />
@@ -54,7 +68,7 @@ export default class Login extends Component {
                         placeholder="Password:"
                         onChangeText={
                             password => {
-                                this.setState({ password })
+                                this.setState({ password });
                             }
                         }
                        />
@@ -74,7 +88,7 @@ export default class Login extends Component {
                     buttonStyle={{ height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22' }}
                     onPress={() => this.props.navigation.navigate('Register')}
                 />
-     
+
             </View>
         );
     }

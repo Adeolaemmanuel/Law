@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import { Agenda} from 'react-native-calendars';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import { Button } from 'react-native-elements';
 import {
     View,

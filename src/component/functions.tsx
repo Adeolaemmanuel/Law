@@ -407,6 +407,73 @@ const getFeeds = (setState: any) => {
     });
 };
 
+const apply = (setState: any, job: any) => {
+    let apply: any = firestore().collection('Jobs');
+    let jobs: any = {...job};
+    let applied;
+    apply.doc('Applied').get().then((e: any)=>{
+      if (e.exists) {
+        if (jobs.jobOwner !== jobs.appliedUser) {
+          console.log('yes');
+          applied = [...e.data().applied];
+          applied.push(jobs);
+          apply.doc('Applied').update({applied: applied}).then((res: any)=>{
+            console.log(res);
+            setState('btnText', 'APPLIED');
+            setState('disableBtn', true);
+          });
+        }
+      } else {
+        apply.doc('Applied').set({applied: [jobs]}).then((res: any)=>{
+          console.log(res);
+            setState('btnText', 'APPLIED');
+            setState('disableBtn', true);
+        });
+      }
+    });
+};
+
+const postJob = (data: any, toastMessage: string) => {
+    let Jobs = firestore().collection('Jobs');
+    console.log(data);
+    for (let x in data) {
+        if (data[x] != null) {
+            Jobs.doc('All').get().then((e: any) => {
+                if (e.exists) {
+                    let jobs = [...e.data().all];
+                    data.id = jobs[jobs.length - 1].id + 1;
+                    jobs.unshift(data);
+                    Jobs.doc('All').update({
+                        all: jobs,
+                    }).then(()=>{
+                        ToastAndroid.show(toastMessage, ToastAndroid.TOP);
+                        data[x] = null;
+                    });
+                } else {
+                    Jobs.doc('All').set({all: [data]}).then(()=>{
+                        ToastAndroid.show(toastMessage, ToastAndroid.TOP);
+                        data[x] = null;
+                    });
+                }
+            });
+        }
+    }
+};
+
+const applied = (setState: any,user: string) => {
+    let jobs = firestore().collection('Jobs');
+    jobs.doc('Applied').get().then((a: any)=>{
+      if (a.exists) {
+        let applyed = [...a.data().applied];
+        for (let x of applyed) {
+          if (x.appliedUser === user) {
+            setState('btnText', 'APPLIED');
+            setState('disableBtn', true);
+          }
+        }
+      }
+    });
+};
 
 /**
  * Quick Tools:
@@ -430,4 +497,7 @@ export {
     upload,
     getFeeds,
     geoLocation,
+    applied,
+    apply,
+    postJob,
 };

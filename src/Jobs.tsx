@@ -18,7 +18,7 @@ import {
      Divider,
      Button,
     } from 'react-native-elements';
-import {Styles} from './functions/styles';
+import {Styles} from './component/styles';
 
 interface JobProps {
     navigation: any

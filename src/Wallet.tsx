@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {ScrollView, View, Text} from 'react-native';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import { Card } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
 

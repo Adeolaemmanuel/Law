@@ -6,11 +6,11 @@ import {
     View,
 } from 'react-native';
 import { Avatar, Card, ListItem } from 'react-native-elements';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import firestore from '@react-native-firebase/firestore';
-import { SearchCenterHeaderModule } from './functions/component';
+import { SearchCenterHeaderModule } from './component/functions';
 import { Dimensions } from 'react-native';
-import * as fn from './functions/component';
+import * as fn from './component/functions';
 export default class Law extends Component {
     render() {
         return (

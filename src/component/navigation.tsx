@@ -12,7 +12,7 @@ import Register from '../Register';
 import Feeds, {FeedDetails} from '../Feed';
 import Profile, { Me, Edit } from '../Profile';
 import Dash from '../Dashboard';
-import Post, { Appeal, Vacancy } from '../Post';
+import Post, { Prelim, Vacancy } from '../Post';
 import Wallet from '../Wallet';
 import Notification from '../Notification';
 import News from '../News';
@@ -277,9 +277,9 @@ class Nav extends Component<NavProps, NavState> {
                 component={Vacancy} 
                 />
                 <Stack.Screen 
-                name="Appeal" 
+                name="Prelim" 
                 options={{ headerTitleAlign: 'center' }} 
-                component={Appeal} 
+                component={Prelim} 
                 />
                 <Stack.Screen 
                 name="Blog Post" 

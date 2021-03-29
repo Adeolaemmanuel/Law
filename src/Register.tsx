@@ -15,7 +15,7 @@ import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';
 import { request, PERMISSIONS } from 'react-native-permissions';
 import { Button } from 'react-native-elements';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

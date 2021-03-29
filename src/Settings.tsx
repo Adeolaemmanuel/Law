@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import {
     ScrollView,
     View,

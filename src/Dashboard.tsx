@@ -12,7 +12,7 @@ import {
 import {
     Card,
  } from 'react-native-elements';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

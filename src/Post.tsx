@@ -1,5 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
+import { PerlState, PostProps, PostState, PostVacancyProps, PostVacancyState, PrelProps } from './component/types';
+import { Styles } from './component/styles';
+import { Button } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Dimensions } from 'react-native';
+import * as fn from './component/functions';
 import {
     View,
     Image,
@@ -8,52 +14,19 @@ import {
     TouchableOpacity,
     ScrollView,
      KeyboardAvoidingView,
-    ToastAndroid,
 } from 'react-native';
-import { Styles } from './functions/styles';
-import { Button } from 'react-native-elements';
-import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dimensions } from 'react-native';
 
-
-export default class Post extends Component {
-    constructor(props) {
+export default class Post extends Component<PostProps, PostState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             Jobs: [
                 { name: 'Vacancy', modal: false, icon: require('./assets/img/vacancy.png'), route: 'Vacancy' },
-                { name: 'Appeal', modal: false, icon: require('./assets/img/compliant.png'), route: 'Appeal' },
+                { name: 'Prelim', modal: false, icon: require('./assets/img/compliant.png'), route: 'Prelim' },
             ],
         };
     }
 
-    componentDidMount() {
-        this.getUser('vacancy', this.state.vacancy);
-        this.getUser('appeal', this.state.appeal);
-    }
-
-    getUser = async (stateData,state) => {
-        let value = await AsyncStorage.getItem('user');
-        if (value) {
-            let data = { ...state };
-            data.user = value;
-            this.setState({ [stateData]: data });
-        }
-    }
-
-    modalOpen = (index) => {
-        const Jobs = [...this.state.Jobs];
-        if (Jobs[index].modal === false) {
-            Jobs[index].modal = true;
-            this.setState({ Jobs });
-            this.setState({ home: false });
-        } else if (Jobs[index].modal === true) {
-            Jobs[index].modal = false;
-            this.setState({ Jobs });
-            this.setState({ home: true });
-        }
-    }
 
 
 
@@ -82,9 +55,11 @@ export default class Post extends Component {
     }
 }
 
+
+
 // fore serurity reasons i advise only lincensce confirmed lawyers are allowed access
-export class Vacancy extends Component {
-    constructor(props) {
+export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             vacancy: { title: null, company: null, type: null, location: null, experience: null, user: null, job: 'Vacancy', summary: null, id: 0},
@@ -103,33 +78,6 @@ export class Vacancy extends Component {
         });
     }
 
-
-    postJob = (data) => {
-        let Jobs = firestore().collection('Jobs');
-        console.log(data);
-        for (let x in data) {
-            if (data[x] != null) {
-                Jobs.doc('All').get().then(e => {
-                    if (e.exists) {
-                        let jobs = [...e.data().all];
-                        data.id = jobs[jobs.length - 1].id + 1;
-                        jobs.unshift(data);
-                        Jobs.doc('All').update({
-                            all: jobs,
-                        }).then(()=>{
-                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
-                            data[x] = null;
-                        });
-                    } else {
-                        Jobs.doc('All').set({all: [data]}).then(()=>{
-                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
-                            data[x] = null;
-                        });
-                    }
-                });
-            }
-        }
-    }
 
     render(){
         return (
@@ -219,7 +167,7 @@ export class Vacancy extends Component {
                             title="Post"
                             type="solid"
                             buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
-                            onPress={()=> this.postJob(this.state.vacancy)}
+                            onPress={()=> fn.postJob(this.state.vacancy, 'Vacancy Posted')}
                         />
                     </View>
                 </KeyboardAvoidingView>
@@ -228,47 +176,22 @@ export class Vacancy extends Component {
     }
 }
 
-export class Appeal extends Component {
-    constructor(props) {
+export class Prelim extends Component<PrelProps, PerlState> {
+    constructor(props: any) {
         super(props);
         this.state = {
-            appeal: { title: null, location: null, date: null, summary: null, user: null, job: 'Appeal', id: 0 },
+            prelim: { title: null, location: null, date: null, summary: null, user: null, job: 'Prelim', id: 0 },
         };
     }
 
     componentDidMount(){
         AsyncStorage.getItem('user').then(u=>{
-            let appeal = {...this.state.appeal};
-            appeal.user = u;
-            this.setState({appeal});
+            let prelim = {...this.state.prelim};
+            prelim.user = u;
+            this.setState({prelim});
         });
     }
 
-    postJob = (data) => {
-        let Jobs = firestore().collection('Jobs');
-        for (let x of data) {
-            if (data[x] !== null) {
-                Jobs.doc('All').get().then(e => {
-                    if (e.exists) {
-                        let jobs = [...e.data().all];
-                        data.id = jobs[jobs.length - 1].id + 1;
-                        jobs.unshift(data);
-                        Jobs.doc('All').update({
-                            all: jobs,
-                        }).then(()=>{
-                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
-                            data[x] = null;
-                        });
-                    } else {
-                        Jobs.doc('All').set({all: [data]}).then(()=>{
-                            ToastAndroid.show('Appeal Posted', ToastAndroid.TOP);
-                            data[x] = null;
-                        });
-                    }
-                });
-            }
-        }
-    }
 
     render(){
         return (
@@ -282,9 +205,9 @@ export class Appeal extends Component {
                                     placeholder="Title:"
                                     onChangeText={
                                         text => {
-                                            let appeal = { ...this.state.appeal };
-                                            appeal.title = text.charAt(0).toUpperCase() + text.slice(1);
-                                            this.setState({ appeal });
+                                            let prelim = { ...this.state.prelim };
+                                            prelim.title = text.charAt(0).toUpperCase() + text.slice(1);
+                                            this.setState({ prelim });
                                         }
                                     }
                                 />
@@ -295,9 +218,9 @@ export class Appeal extends Component {
                                     placeholder="Location:"
                                     onChangeText={
                                         text => {
-                                            let appeal = { ...this.state.appeal };
-                                            appeal.location = text.charAt(0).toUpperCase() + text.slice(1);
-                                            this.setState({ appeal });
+                                            let prelim = { ...this.state.prelim };
+                                            prelim.location = text.charAt(0).toUpperCase() + text.slice(1);
+                                            this.setState({ prelim });
                                         }
                                     }
                                 />
@@ -308,9 +231,9 @@ export class Appeal extends Component {
                                     placeholder="Date:"
                                     onChangeText={
                                         text => {
-                                            let appeal = { ...this.state.appeal };
-                                            appeal.date = text.charAt(0).toUpperCase() + text.slice(1);
-                                            this.setState({ appeal });
+                                            let prelim = { ...this.state.prelim };
+                                            prelim.date = text.charAt(0).toUpperCase() + text.slice(1);
+                                            this.setState({ prelim });
                                         }
                                     }
                                 />
@@ -324,9 +247,9 @@ export class Appeal extends Component {
                                     underlineColorAndroid="transparent"
                                     onChangeText={
                                         text => {
-                                            let appeal = { ...this.state.appeal };
-                                            appeal.summary = text.charAt(0).toUpperCase() + text.slice(1);
-                                            this.setState({ appeal });
+                                            let prelim = { ...this.state.prelim };
+                                            prelim.summary = text.charAt(0).toUpperCase() + text.slice(1);
+                                            this.setState({ prelim });
                                         }
                                     }
 
@@ -337,7 +260,7 @@ export class Appeal extends Component {
                                 title="Post"
                                 type="solid"
                                 buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
-                                onPress={()=> this.postJob(this.state.appeal)}
+                                onPress={()=> fn.postJob(this.state.prelim, 'Prelim Posted')}
                             />
                         </View>
                     </View>

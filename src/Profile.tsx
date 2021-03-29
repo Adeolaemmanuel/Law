@@ -1,9 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import * as fn from './functions/component';
+import * as fn from './component/functions';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 
 
 import { Button } from 'react-native-elements';

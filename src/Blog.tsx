@@ -10,7 +10,7 @@ import {
     View,
     TouchableHighlight,
 } from 'react-native';
-import { Styles } from './functions/styles';
+import { Styles } from './component/styles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Button } from 'react-native-elements';
 import {  } from 'react-native';

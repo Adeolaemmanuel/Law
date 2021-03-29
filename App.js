@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { Nav, getHeaderTitle } from './src/functions/navigation';
+import { Nav, getHeaderTitle } from './src/component/navigation';
 
 class App extends Component {
 

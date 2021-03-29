@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable eol-last */
 
-import * as fn from './functions/component';
+import * as fn from './component/functions';
 import React, { Component } from 'react';
 import {
     View,
@@ -17,7 +17,7 @@ import {
      Divider,
      Button,
     } from 'react-native-elements';
-import {Styles} from './functions/styles'
+import {Styles} from './component/styles'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -58,7 +58,7 @@ export default class Feeds extends Component<FeedProps, FeedState> {
 
   setHandlerState = (state: string, data: string) => {
     this.setState({[state]: data});
-}
+  }
 
   render() {
     return (
@@ -119,12 +119,12 @@ export class FeedDetails extends Component<FeedDetProps, FeedDetState> {
   }
 
 initializeDetails(){
-  const { Details } = this.props.route.params;
     if (this.ismounted) {
-      this.setState({Details});
-      AsyncStorage.getItem('user').then((user: any)=>{
-        this.setState({user});
-      });
+      const { Details } = this.props.route.params;
+        this.setState({Details});
+        AsyncStorage.getItem('user').then((user: any)=>{
+          this.setState({user});
+        });
     }
 }
 
@@ -143,7 +143,7 @@ initializeDetails(){
 interface vacancyProps {
   route: any,
   navigation: any
-  details: any
+  details?: any
 }
 interface vacancyState {
   Details: any
@@ -160,10 +160,10 @@ class VacancyDetails extends Component<vacancyProps, vacancyState> {
         disableBtn: false,
         btnText: 'APPLY',
     };
-    this.apply = this.apply.bind(this);
   }
 
-  ismounted = false;
+  ismounted: boolean = false;
+  applyData: any = {id: this.state.Details.id, appliedUser: this.state.user, jobOwner: this.state.Details.user, job: this.state.Details.job};
   componentDidUpdate(){
     this.ismounted = true;
     this.initializeDetails(this.props.details);
@@ -178,47 +178,15 @@ class VacancyDetails extends Component<vacancyProps, vacancyState> {
         AsyncStorage.getItem('user').then((user: any)=>{
           this.setState({user,Details});
         });
-        this.applied();
+        fn.applied(this.setHandlerState, this.state.user);
       }
   }
 
-  apply(){
-    let apply = firestore().collection('Jobs');
-    let jobs = {id: this.state.Details.id, appliedUser: this.state.user, jobOwner: this.state.Details.user, job: this.state.Details.job};
-    let applied;
-    apply.doc('Applied').get().then((e: any)=>{
-      if (e.exists) {
-        if (jobs.jobOwner !== jobs.appliedUser) {
-          console.log('yes');
-          applied = [...e.data().applied];
-          applied.push(jobs);
-          apply.doc('Applied').update({applied: applied}).then(res=>{
-            console.log(res);
-            this.setState({btnText: 'APPLIED', disableBtn: true});
-          });
-        }
-      } else {
-        apply.doc('Applied').set({applied: [jobs]}).then((res)=>{
-          console.log(res);
-          this.setState({btnText: 'APPLIED', disableBtn: true});
-        });
-      }
-    });
-  }
+  setHandlerState = (state: string, data: string) => {
+    this.setState({[state]: data});
+}
 
-  applied(){
-    let jobs = firestore().collection('Jobs');
-    jobs.doc('Applied').get().then((a: any)=>{
-      if (a.exists) {
-        let applyed = [...a.data().applied];
-        for (let x of applyed) {
-          if (x.appliedUser === this.state.user) {
-            this.setState({btnText: 'APPLIED', disableBtn: true});
-          }
-        }
-      }
-    });
-  }
+
 
   render(){
     return (
@@ -273,7 +241,7 @@ class VacancyDetails extends Component<vacancyProps, vacancyState> {
               type="solid"
               disabled={this.state.disableBtn}
               buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
-              onPress={this.apply}
+              onPress={()=> fn.apply(this.setHandlerState, this.applyData)}
           />
       </ScrollView>
   );
