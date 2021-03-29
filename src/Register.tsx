@@ -123,7 +123,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
         data.gender.substr(0, 1).toUpperCase();
         data.firstname.substr(0, 1).toUpperCase();
         data.lastname.substr(0, 1).toUpperCase();
-        this.Admin.doc('Users').get().then(e => {
+        this.Admin.doc('Users').get().then((e: any) => {
             let users = [];
             if (e.exists) {
                 users = [...e.data().email];
@@ -135,7 +135,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         this.Users.doc(data.email).set(data).then(() => {
                             AsyncStorage.setItem('user', data.email).then( e => {
                                 if (e) {console.log(e);}
-                                this.props.navigation.push('Drawer');
+                                this.props.navigation.navigate('Drawer');
                             });
                         });
                     });

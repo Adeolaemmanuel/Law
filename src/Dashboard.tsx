@@ -95,7 +95,7 @@ export default class Dashboard extends Component<DashProps, DashState> {
                             this.state.Nav.map((arr: any,ind: number)=>{
                                 return (
                                     <View key={`dashboard-${ind}`} style={{width: (Dimensions.get('screen').width - 30) / 2, height: 160, padding: 5, margin: 7, marginTop: 0, paddingTop: 0}}>
-                                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate(`${arr.route}`)}>
+                                        <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.push(`${arr.route}`)}>
                                         <Image style={Styles.image} source={arr.image} />
                                         <Text style={Styles.navText}>{arr.name}</Text>
                                         </TouchableOpacity>

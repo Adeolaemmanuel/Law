@@ -10,6 +10,7 @@ import {
     Pressable,
     Text,
     Image,
+    BackHandler,
 } from 'react-native';
 import {
      Card,
@@ -38,6 +39,7 @@ export default class Jobs extends Component<JobProps, JobState> {
 
     ismounted: boolean = false;
     componentDidMount(){
+        BackHandler.addEventListener('hardwareBackPress', ()=> {return true});
         this.ismounted = true;
         this.initializeJobs();
     }
@@ -236,13 +238,13 @@ export class Applied extends Component<JobAppProps, JobAppState> {
         if (this.ismounted) {
             let apply = firestore().collection('Jobs');
             let applied;
-            apply.doc('Applied').onSnapshot(a=>{
+            apply.doc('Applied').onSnapshot((a: any)=>{
                 if (a.exists) {
                     applied = [...a.data().applied];
                     for (let x of applied) {
                         if (id === x.id) {
                             firestore().collection('Users').doc(x.appliedUser).get()
-                            .then(u=>{
+                            .then((u: any)=>{
                                 if (u.exists) {
                                     x.profilePicture = u.data().profilePicture;
                                     x.name = `${u.data().firstname} ${u.data().lastname}`;

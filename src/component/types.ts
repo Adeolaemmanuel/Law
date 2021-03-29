@@ -7,11 +7,12 @@ export interface MainState {
     Jobs: any[]
 }
 
-export interface PostProps extends MainProps {
-
+export interface PostProps {
+    navigation: any
+    route: any
 }
 
-export interface PostState extends MainState {
+export interface PostState {
     Jobs: any[]
 }
 

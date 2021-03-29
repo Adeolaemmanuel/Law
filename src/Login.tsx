@@ -29,6 +29,17 @@ export default class Login extends Component<LoginProps, LoginState> {
         };
     }
 
+    ismounted = false
+    componentDidMount(){
+        this.ismounted = true;
+        if (this.ismounted) {
+            AsyncStorage.getItem('user', (u: any) =>{
+                if (u) {
+                    this.props.navigation.navigate('Drawer')
+                }
+            });
+        }
+    }
 
     Admin = firestore().collection('Admin');
     Users = firestore().collection('Users');

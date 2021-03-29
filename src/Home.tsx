@@ -71,21 +71,13 @@ export default class Home extends Component {
 
     componentDidMount() {
         //this.clearAll();
-        BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
+        BackHandler.addEventListener('hardwareBackPress', ()=> {return true});
         setTimeout(() => {
             let load = false;
             this.setState({ load });
         }, 3000);
     }
 
-    onBackPress = () => {
-        const { dispatch, nav } = this.props;
-        if (nav.index === 0) {
-            return false;
-        }
-        dispatch(NavigationAction.back());
-        return true;
-    };
 
 
     clearAll = async () => {
@@ -130,7 +122,7 @@ export default class Home extends Component {
             }
         }
     }
-    onSwipe = (pram) => {
+    onSwipe = (pram: any) => {
         if (pram === 'left') {
             if (this.state.currentIndex !== (this.state.slides.length - 1)) {
                 this.setState({ currentIndex: this.state.currentIndex += 1 });
