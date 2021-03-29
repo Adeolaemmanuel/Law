@@ -4,8 +4,8 @@ import * as fn from './functions/component';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from './functions/styles';
-import storage from '@react-native-firebase/storage';
-import { launchImageLibrary } from 'react-native-image-picker';
+
+
 import { Button } from 'react-native-elements';
 import {
     View,
@@ -282,7 +282,7 @@ export class Me extends Component<MeProps, MeState> {
       };
   }
 
-  ismounted = false;
+  ismounted: boolean = false;
     componentDidMount() {
         this.ismounted = true;
         this.initializeMe();
@@ -343,35 +343,11 @@ export class Me extends Component<MeProps, MeState> {
         this.ismounted = false;
     }
 
-    user = firestore().collection('Users')
-    friends = firestore().collection('Friends')
+    user: any = firestore().collection('Users')
+    friends: any = firestore().collection('Friends')
 
     setHandlerState = (state: string, data: string) => {
         this.setState({[state]: data});
-    }
-
-    upload = () => {
-        launchImageLibrary('photo', img => {
-            let profilePic: any = img.uri;
-            this.setState({ profilePic });
-            let user = firestore().collection('Users');
-
-            AsyncStorage.getItem('user').then(d => {
-                if (d != null) {
-                    const reference = storage().ref(`${d}/profile`);
-                    reference.putFile(profilePic).then(() => {
-                        reference.getDownloadURL().then(i => {
-                            user.doc(d).update({
-                                profilePicture: i,
-                            }).then(() => {
-                                ToastAndroid.show('Profile Picture Updated', ToastAndroid.TOP);
-                            });
-                        });
-
-                    });
-                }
-            });
-        });
     }
 
     render() {
@@ -393,7 +369,7 @@ export class Me extends Component<MeProps, MeState> {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                            onPress={this.upload}
+                            onPress={()=> fn.upload(this.setHandlerState)}
                         >
                             <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, padding: 10 }}>Upload</Text>
                         </TouchableOpacity>

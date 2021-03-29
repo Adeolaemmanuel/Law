@@ -3,11 +3,14 @@ import React, { Component } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from './styles';
+import { launchImageLibrary } from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 import { Image } from 'react-native-elements';
 import {
     View,
     TextInput,
     Pressable,
+    ToastAndroid,
 } from 'react-native';
 
 interface SearchProps {
@@ -43,20 +46,15 @@ class SearchCenterHeaderModule extends Component<SearchProps> {
 
 
 const Follow = (follow: any, user: string,setState: any) => {
-    AsyncStorage.getItem('user').then(e=>{
+    AsyncStorage.getItem('user').then((e: any)=>{
+        //user refers to friend
         follow.doc(user).collection('Admin').doc('Data').get().then((u: any)=>{
 
             if (u.exists) {
-                let recieved = [...u.data().recieved];
-                let index = recieved.indexOf(e);
+                let recieved: string[] = [...u.data().recieved];
+                let index: number = recieved.indexOf(e);
 
-                if (index !== -1) {
-                    follow.doc(user).collection('Admin').doc('Data').update({
-                        recieved: recieved,
-                    }).then(()=>{
-                        setState('followBtnText','Unfollow');
-                    });
-                } else {
+                if (index !== 1) {
                     recieved.unshift(e);
                     follow.doc(user).collection('Admin').doc('Data').update({
                         recieved: recieved,
@@ -64,6 +62,7 @@ const Follow = (follow: any, user: string,setState: any) => {
                         setState('followBtnText','Unfollow');
                     });
                 }
+
             } else {
                 follow.doc(user).collection('Admin').doc('Data').set({
                     recieved: [e],
@@ -77,15 +76,9 @@ const Follow = (follow: any, user: string,setState: any) => {
 
         follow.doc(e).collection('Admin').doc('Data').get().then((u: any)=>{
             if (u.exists) {
-                let sent = [...u.data().sent];
-                let index = sent.indexOf(user);
-                if (index !== -1) {
-                    follow.doc(e).collection('Admin').doc('Data').update({
-                        sent: sent,
-                    }).then(()=>{
-                        setState('followBtnText','Unfollow');
-                    });
-                } else {
+                let sent: string[] = [...u.data().sent];
+                let index: number = sent.indexOf(user);
+                if (index !== 1) {
                     sent.unshift(user);
                     follow.doc(e).collection('Admin').doc('Data').update({
                         sent: sent,
@@ -106,31 +99,30 @@ const Follow = (follow: any, user: string,setState: any) => {
     });
 };
 
-const Unfollow = (follow: any, user: string,setState: any) => {
+const Unfollow = (unfollow: any, user: string,setState: any) => {
+    //user refers to friend
     AsyncStorage.getItem('user').then((e: any)=>{
-        follow.doc(user).collection('Admin').doc('Data').get().then((u: any)=>{
+        unfollow.doc(e).collection('Admin').doc('Data').get().then((u: any)=>{
             if (u.exists) {
-                let recieved = [...u.data().recieved];
-                let index = recieved.indexOf(e);
-                if (index !== -1) {
-                    let splice = recieved.splice(index, index + 1);
+                let recieved: string[] = [...u.data().recieved];
+                let confirmed: string[] = [...u.data().confirmed];
+                let indexR: number = recieved.indexOf(user);
+                let indexC: number = confirmed.indexOf(user);
+
+                if (indexR !== -1) {
+                    let splice = recieved.splice(indexR, indexR + 1);
                     console.log(splice);
-                    follow.doc(user).collection('Admin').doc('Data').update({
+                    unfollow.doc(e).collection('Admin').doc('Data').update({
                         recieved: recieved,
                     }).then(()=>{
                         setState('followBtnText','Follow');
                     });
                 }
-            }
-        });
 
-        follow.doc(user).collection('Admin').doc('Data').get().then((u: any)=>{
-            if (u.exists) {
-                let confirmed = [...u.data().confirmed];
-                let index = confirmed.indexOf(e);
-                if (index !== -1) {
-                    confirmed.splice(index, index + 1);
-                    follow.doc(user).collection('Admin').doc('Data').update({
+                if (indexC !== -1) {
+                    let splice = confirmed.splice(indexC, indexC + 1);
+                    console.log(splice);
+                    unfollow.doc(e).collection('Admin').doc('Data').update({
                         confirmed: confirmed,
                     }).then(()=>{
                         setState('followBtnText','Follow');
@@ -139,30 +131,27 @@ const Unfollow = (follow: any, user: string,setState: any) => {
             }
         });
 
-        follow.doc(user).collection('Admin').doc('Data').get().then((u: any)=>{
+        unfollow.doc(user).collection('Admin').doc('Data').get().then((u: any)=>{
             if (u.exists) {
-                let recieved = [...u.data().recieved];
-                let index = recieved.indexOf(e);
-                if (index !== -1) {
-                    let splice = recieved.splice(index, index + 1);
-                    console.log(splice);
-                    follow.doc(user).collection('Admin').doc('Data').update({
-                        recieved: recieved,
+                let recieved: string[] = [...u.data().recieved];
+                let confirmed: string[] = [...u.data().confirmed];
+                let indexR: number = recieved.indexOf(e);
+                let indexC: number = confirmed.indexOf(e);
+
+                if (indexC !== -1) {
+                    confirmed.splice(indexC, indexC + 1);
+                    unfollow.doc(user).collection('Admin').doc('Data').update({
+                        confirmed: confirmed,
                     }).then(()=>{
                         setState('followBtnText','Follow');
                     });
                 }
-            }
-        });
 
-        follow.doc(user).collection('Admin').doc('Data').get().then((u: any)=>{
-            if (u.exists) {
-                let confirmed = [...u.data().confirmed];
-                let index = confirmed.indexOf(e);
-                if (index !== -1) {
-                    confirmed.splice(index, index + 1);
-                    follow.doc(user).collection('Admin').doc('Data').update({
-                        confirmed: confirmed,
+                if (indexR !== -1) {
+                    let splice = recieved.splice(indexR, indexR + 1);
+                    console.log(splice);
+                    unfollow.doc(user).collection('Admin').doc('Data').update({
+                        recieved: recieved,
                     }).then(()=>{
                         setState('followBtnText','Follow');
                     });
@@ -173,6 +162,7 @@ const Unfollow = (follow: any, user: string,setState: any) => {
 };
 
 const followBack = (follow: any, user: string,setState: any) => {
+    //user refairs to friend
     AsyncStorage.getItem('user').then((e: any)=>{
         follow.doc(e).collection('Admin').doc('Data').get().then((u: any)=>{
 
@@ -187,9 +177,6 @@ const followBack = (follow: any, user: string,setState: any) => {
                     confirmed.push(recieved.splice(indexRec, indexRec + 1).toString());
                     follow.doc(e).collection('Admin').doc('Data').update({
                         recieved: recieved,
-                    });
-
-                    follow.doc(e).collection('Admin').doc('Data').update({
                         confirmed: confirmed,
                     }).then(()=>{
                         setState('followBtnText','Unfollow');
@@ -200,9 +187,6 @@ const followBack = (follow: any, user: string,setState: any) => {
                     confirmed.push(sent.splice(indexSent, indexSent + 1).toString());
                     follow.doc(e).collection('Admin').doc('Data').update({
                         sent: sent,
-                    });
-
-                    follow.doc(e).collection('Admin').doc('Data').update({
                         confirmed: confirmed,
                     }).then(()=>{
                         setState('followBtnText','Unfollow');
@@ -262,7 +246,7 @@ const profileButtonHandlerModule = (type: string,user: string,setState: any) => 
         Unfollow(follow,user,setState);
     }
     else if (type === 'Follow Back') {
-        followBack(Follow,user,setState);
+        followBack(follow,user,setState);
     }
 };
 
@@ -354,6 +338,30 @@ const getLawyers = (Admin: any, User: any, setState: any) => {
     });
 };
 
+const upload = (setState: any) => {
+    launchImageLibrary('photo', img => {
+        let profilePic: any = img.uri;
+        setState('profilePic', profilePic);
+        let user = firestore().collection('Users');
+
+        AsyncStorage.getItem('user').then((d: any) => {
+            if (d != null) {
+                const reference = storage().ref(`${d}/profile`);
+                reference.putFile(profilePic).then(() => {
+                    reference.getDownloadURL().then(i => {
+                        user.doc(d).update({
+                            profilePicture: i,
+                        }).then(() => {
+                            ToastAndroid.show('Profile Picture Updated', ToastAndroid.TOP);
+                        });
+                    });
+
+                });
+            }
+        });
+    });
+};
+
 
 
 export {
@@ -366,4 +374,5 @@ export {
     Unfollow,
     followBack,
     getLawyers,
+    upload,
 };
