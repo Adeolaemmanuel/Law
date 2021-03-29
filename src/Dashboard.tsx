@@ -36,7 +36,7 @@ export default class Dashboard extends Component<DashProps, DashState> {
             Nav: [
                 {name: 'Jobs', image: require('./assets/img/businessman.png'), route: 'Jobs' },
                 {name: 'Post Jobs', image: require('./assets/img/sticky-notes.png'), route: 'Post' },
-                {name: 'Calendar', image: require('./assets/img/schedule.png'), route: 'Calender' },
+                {name: 'Agenda', image: require('./assets/img/schedule.png'), route: 'Calender' },
                 {name: 'Lawyer', image: require('./assets/img/lawyer.png'), route: 'Lawyers' },
                 {name: 'Law', image: require('./assets/img/law-book.png'), route: 'Law' },
                 {name: 'Blog', image: require('./assets/img/blog.png'), route: 'Blog' },
@@ -70,7 +70,7 @@ export default class Dashboard extends Component<DashProps, DashState> {
                     user.doc(u).onSnapshot((e: any) => {
                         if (e.exists) {
                             let name = `Welcome! ${e.data().firstname} ${e.data().lastname}`;
-                            let email = e.data().email;
+                            //let email = e.data().email;
                             this.setState({ name });
                         }
                     });

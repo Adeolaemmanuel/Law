@@ -16,7 +16,7 @@ import Post, { Appeal, Vacancy } from '../Post';
 import Wallet from '../Wallet';
 import Notification from '../Notification';
 import News from '../News';
-import Calender from '../Calender';
+import Agenda from '../Agenda';
 import Blog, { BlogPost } from '../Blog';
 import Message from '../Message';
 import Law, { Lawyers } from '../Law';
@@ -231,10 +231,10 @@ class Nav extends Component<NavProps, NavState> {
                 component={ News } 
                 />
                 <Stack.Screen 
-                name="Calender" 
+                name="Agenda" 
                 options={{
                     headerTitleAlign: 'center',
-                }} component={ Calender } 
+                }} component={ Agenda } 
                 />
                 <Stack.Screen 
                 name="Blog" 
