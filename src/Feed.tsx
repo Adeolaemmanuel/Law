@@ -1,9 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable eol-last */
-import Geolocation from 'react-native-geolocation-service';
-import {request, PERMISSIONS} from 'react-native-permissions';
 
-import firestore from '@react-native-firebase/firestore';
+import * as fn from './functions/component';
 import React, { Component } from 'react';
 import {
     View,
@@ -20,14 +18,24 @@ import {
      Button,
     } from 'react-native-elements';
 import {Styles} from './functions/styles'
-import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default class Feeds extends Component {
+
+interface FeedProps {
+  route: any,
+  navigation: any
+  details: any
+}
+interface FeedState {
+  Feed: any
+  addressComponent: any
+}
+export default class Feeds extends Component<FeedProps, FeedState> {
   constructor(props: any) {
     super(props);
     this.state = {
       Feed: [],
+      addressComponent: 'null',
     };
   }
 
@@ -43,54 +51,21 @@ export default class Feeds extends Component {
 
   initializeFeed(){
     if (this.ismounted) {
-        request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
-          if (result === 'granted') {
-              Geolocation.getCurrentPosition(
-                  (position) => {
-                      Geocoder.init('AIzaSyD8LIhgvlYbX89FYSOLfM-z8MkuIwoUeYE');
-                      Geocoder.from({ latitude: position.coords.latitude, longitude: position.coords.longitude  })
-                          .then(json => {
-                              var addressComponent = json.results[0].address_components;
-                              console.log(addressComponent);
-                          })
-                          .catch(error => console.warn(error));
-                  },
-                  (error) => {
-                      // See error code charts below.
-                      console.log(error.code, error.message);
-                  },
-                  { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-              );
-
-              let Feed: any;
-              firestore().collection('Jobs').doc('All').onSnapshot( (j: any) => {
-                  if (j.exists) {
-                      Feed = [...j.data().all];
-                      for (let x of Feed) {
-                          firestore().collection('Users').doc(x.user).onSnapshot( (u: any) => {
-                              x.profilePicture = u.data().profilePicture;
-                              this.setState({ Feed });
-                          });
-                      }
-                  }
-              });
-
-          } else {
-              PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
-              PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
-              PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
-          }
-        this.initializeFeed();
-      });
+      fn.geoLocation(this.setHandlerState);
+      fn.getFeeds(this.setHandlerState);
     }
   }
+
+  setHandlerState = (state: string, data: string) => {
+    this.setState({[state]: data});
+}
 
   render() {
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
           <View>
               {
-                  this.state.Feed.map((item, i) => (
+                  this.state.Feed.map((item: any, i: any) => (
                       <Pressable key={`BtnDetails-${item.key}${i}`} onPress={() => this.props.navigation.navigate('Feed Details', { Details: item })}>
                           <Card>
                               <ListItem>

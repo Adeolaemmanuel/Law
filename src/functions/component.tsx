@@ -2,9 +2,12 @@
 import React, { Component } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Geolocation from 'react-native-geolocation-service';
+import {request, PERMISSIONS} from 'react-native-permissions';
 import { Styles } from './styles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import Geocoder from 'react-native-geocoding';
 import { Image } from 'react-native-elements';
 import {
     View,
@@ -44,6 +47,33 @@ class SearchCenterHeaderModule extends Component<SearchProps> {
     }
 }
 
+const geoLocation = (setState: any) => {
+    request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
+        if (result === 'granted') {
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    Geocoder.init('AIzaSyD8LIhgvlYbX89FYSOLfM-z8MkuIwoUeYE');
+                    Geocoder.from({ latitude: position.coords.latitude, longitude: position.coords.longitude  })
+                        .then(json => {
+                            var addressComponent = json.results[0].address_components;
+                            setState('addressComponent', addressComponent);
+                        })
+                        .catch(error => console.warn(error));
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+
+        } else {
+            PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
+            PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
+            PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+        }
+      });
+};
 
 const Follow = (follow: any, user: string,setState: any) => {
     AsyncStorage.getItem('user').then((e: any)=>{
@@ -362,6 +392,29 @@ const upload = (setState: any) => {
     });
 };
 
+const getFeeds = (setState: any) => {
+    let Feed: any;
+    firestore().collection('Jobs').doc('All').onSnapshot( (j: any) => {
+        if (j.exists) {
+            Feed = [...j.data().all];
+            for (let x of Feed) {
+                firestore().collection('Users').doc(x.user).onSnapshot( (u: any) => {
+                    x.profilePicture = u.data().profilePicture;
+                    setState('Feed', Feed);
+                });
+            }
+        }
+    });
+};
+
+
+/**
+ * Quick Tools:
+ * 1.) set State
+ *  setHandlerState = (state: string, data: string) => {
+        this.setState({[state]: data});
+    }
+ */
 
 
 export {
@@ -375,4 +428,6 @@ export {
     followBack,
     getLawyers,
     upload,
+    getFeeds,
+    geoLocation,
 };
