@@ -31,4 +31,5 @@ export interface PrelProps {
 
 export interface PerlState {
     prelim: any
+    type: string[]
 }

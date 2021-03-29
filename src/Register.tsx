@@ -8,8 +8,8 @@ import {
     KeyboardAvoidingView,
     ScrollView,
     ToastAndroid,
-    Picker,
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import { Badge } from 'react-native-elements';
 import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';

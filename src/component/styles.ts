@@ -43,6 +43,18 @@ const Styles = StyleSheet.create({
         marginTop: 20,
         elevation: 5
     },
+    cardC: {
+        flex: 1,
+        padding: 10,
+        borderRadius: 5,
+        margin: 10,
+        shadowColor: 'black',
+        shadowOffset: { x: 0, y: 10 },
+        shadowOpacity: 1,
+        alignSelf: 'stretch',
+        backgroundColor: 'white',
+        elevation: 5,
+    },
     name: {
         flex: 1,
         flexDirection: 'row',
@@ -62,14 +74,13 @@ const Styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     input: {
-        height: 70,
         backgroundColor: 'white',
         borderWidth: 1,
         borderRadius: 5,
-        marginTop: 20,
-        margin: 12,
+        margin: 10,
         padding: 10,
         fontSize: 20,
+        height: 65,
     },
     inputCustom: {
         borderWidth: 1,

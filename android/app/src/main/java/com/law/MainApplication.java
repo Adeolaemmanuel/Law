@@ -13,7 +13,7 @@ import java.util.List;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import com.zoontek.rnpermissions.RNPermissionsPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
-
+import com.reactnativecommunity.picker.RNCPickerPackage;
 
 
 

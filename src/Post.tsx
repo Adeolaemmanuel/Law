@@ -6,6 +6,7 @@ import { Button } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dimensions } from 'react-native';
 import * as fn from './component/functions';
+import {Picker} from '@react-native-picker/picker';
 import {
     View,
     Image,
@@ -32,8 +33,8 @@ export default class Post extends Component<PostProps, PostState> {
 
     render() {
         return (
-            <ScrollView>
-                <View style={[{backgroundColor: 'white'}, Styles.containerRow]}>
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <View style={[Styles.containerRow]}>
                     {
                         this.state.Jobs.map((arr,ind)=>{
                             return (
@@ -81,13 +82,13 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
 
     render(){
         return (
-            <ScrollView>
+            <ScrollView style={{backgroundColor: 'white'}}>
                 <KeyboardAvoidingView>
                     <View style={Styles.container} >
                         <View style={Styles.containerPaddingMargin}>
                             <View>
                                 <TextInput
-                                    style={Styles.input}
+                                    style={[Styles.input, Styles.cardC]}
                                     placeholder="Job Title:"
                                     onChangeText={
                                         text => {
@@ -100,7 +101,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                             </View>
                             <View style={Styles.containerRow} >
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input]}
+                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
                                     placeholder="Company:"
                                     onChangeText={
                                         text => {
@@ -111,7 +112,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                                     }
                                 />
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input]}
+                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
                                     placeholder="Job Type:"
                                     onChangeText={
                                         text => {
@@ -124,7 +125,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                             </View>
                             <View style={Styles.containerRow} >
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input]}
+                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
                                     placeholder="Location:"
                                     onChangeText={
                                         text => {
@@ -135,7 +136,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                                     }
                                 />
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input]}
+                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
                                     placeholder="Experience:"
                                     onChangeText={
                                         text => {
@@ -148,7 +149,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                             </View>
                             <View style={[{ padding: 5 }, Styles.container]}>
                                 <TextInput
-                                    style={[{ justifyContent: 'flex-start', textAlignVertical: 'top', backgroundColor: '#ebedf0' }, Styles.inputCustom]}
+                                    style={[{ justifyContent: 'flex-start', textAlignVertical: 'top' }, Styles.inputCustom, Styles.cardC]}
                                     placeholder="Job details and reqirements:"
                                     multiline={true}
                                     numberOfLines={3}
@@ -180,12 +181,13 @@ export class Prelim extends Component<PrelProps, PerlState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            prelim: { title: null, location: null, date: null, summary: null, user: null, job: 'Prelim', id: 0 },
+            prelim: { title: null, location: null, date: null, summary: null, user: null, job: 'Prelim', id: 0, type: 'Post Process' },
+            type: ['Post Process', 'Post Brief'],
         };
     }
 
     componentDidMount(){
-        AsyncStorage.getItem('user').then(u=>{
+        AsyncStorage.getItem('user').then((u: any)=>{
             let prelim = {...this.state.prelim};
             prelim.user = u;
             this.setState({prelim});
@@ -201,7 +203,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                         <View style={Styles.containerPaddingMargin}>
                             <View>
                                 <TextInput
-                                    style={Styles.input}
+                                    style={[{marginTop: -2}, Styles.input, Styles.cardC]}
                                     placeholder="Title:"
                                     onChangeText={
                                         text => {
@@ -212,9 +214,25 @@ export class Prelim extends Component<PrelProps, PerlState> {
                                     }
                                 />
                             </View>
+
+                            <View style={[Styles.input, Styles.cardC]}>
+                                <Picker
+                                    selectedValue={this.state.prelim.type}
+                                    mode="dropdown"
+                                    onValueChange={(text) =>{
+                                        let prelim = {...this.state.prelim};
+                                        prelim.type = text;
+                                        this.setState({prelim});
+                                    }
+                                    }>
+                                    <Picker.Item label="Post Process" value="Post Process" />
+                                    <Picker.Item label="Post Brief" value="Post Brief" />
+                                </Picker>
+                            </View>
+
                             <View>
                                 <TextInput
-                                    style={Styles.input}
+                                    style={[Styles.input, Styles.cardC]}
                                     placeholder="Location:"
                                     onChangeText={
                                         text => {
@@ -227,7 +245,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                             </View>
                             <View>
                                 <TextInput
-                                    style={Styles.input}
+                                    style={[Styles.input, Styles.cardC]}
                                     placeholder="Date:"
                                     onChangeText={
                                         text => {
@@ -240,7 +258,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                             </View>
                             <View style={[{ padding: 5 }, Styles.container]}>
                                 <TextInput
-                                    style={[{ textAlignVertical: 'top', backgroundColor: '#ebedf0' }, Styles.inputCustom]}
+                                    style={[{ textAlignVertical: 'top' }, Styles.inputCustom, Styles.cardC]}
                                     placeholder="Summary:"
                                     multiline={true}
                                     numberOfLines={3}

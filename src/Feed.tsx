@@ -17,7 +17,7 @@ import {
      Divider,
      Button,
     } from 'react-native-elements';
-import {Styles} from './component/styles'
+import {Styles} from './component/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 

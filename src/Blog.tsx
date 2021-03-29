@@ -94,13 +94,13 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
                     <View style={{marginTop: 20}} >
                         <View style={[{ padding: 5 }, Styles.container]}>
                             <TextInput
-                                style={[{height: 70}, Styles.inputCustom]}
+                                style={[{height: 70}, Styles.input, Styles.cardC]}
                                 placeholder="Title:"
                             />
                         </View>
                         <View style={[{ padding: 5 }, Styles.container]}>
                             <TextInput
-                                style={[{ backgroundColor: '#ebedf0' }, Styles.inputCustom]}
+                                style={[{justifyContent: 'flex-start', textAlignVertical: 'top' }, Styles.inputCustom, Styles.cardC]}
                                 placeholder="What's on your mind..."
                                 multiline={true}
                                 numberOfLines={3}
