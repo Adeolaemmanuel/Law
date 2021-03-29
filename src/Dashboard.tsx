@@ -17,11 +17,22 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-export default class Dashboard extends Component {
-    constructor(props) {
+
+interface DashProps {
+    navigation: any
+    source: any
+    style: any
+}
+
+interface DashState {
+    Nav: any,
+    name: string
+}
+export default class Dashboard extends Component<DashProps, DashState> {
+    constructor(props: any) {
         super(props);
         this.state = {
-            name: null,
+            name: '',
             Nav: [
                 {name: 'Jobs', image: require('./assets/img/businessman.png'), route: 'Jobs' },
                 {name: 'Post Jobs', image: require('./assets/img/sticky-notes.png'), route: 'Post' },
@@ -34,29 +45,39 @@ export default class Dashboard extends Component {
     }
 
     componentDidMount() {
-
-        BackHandler.addEventListener(
-            'hardwareBackPress',
-            () => {
-                return true;
-            }
-        );
-
-        const user = firestore().collection('Users')
-
-        AsyncStorage.getItem('user').then(u => {
-            user.doc(u).onSnapshot(e => {
-                let name = `Welcome! ${e.data().firstname} ${e.data().lastname}`;
-                let email = e.data().email;
-                this.setState({ name });
-            });
-        });
+        this.ismounted = true;
+        this.initializeDash();
     }
 
+    ismounted = false;
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
+    initializeDash(){
+        if (this.ismounted) {
+            BackHandler.addEventListener(
+                'hardwareBackPress',
+                () => {
+                    return true;
+                }
+            );
+
+            const user = firestore().collection('Users');
+
+            AsyncStorage.getItem('user').then(u => {
+                if (u){
+                    user.doc(u).onSnapshot(e => {
+                        if (e.exists) {
+                            let name = `Welcome! ${e.data().firstname} ${e.data().lastname}`;
+                            let email = e.data().email;
+                            this.setState({ name });
+                        }
+                    });
+                }
+            });
+        }
+    }
 
     render() {
         return (

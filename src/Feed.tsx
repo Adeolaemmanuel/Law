@@ -31,51 +31,59 @@ export default class Feeds extends Component {
     };
   }
 
+  ismounted = false;
   componentDidMount() {
-    request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
-        if (result === 'granted') {
-            Geolocation.getCurrentPosition(
-                (position) => {
-                    Geocoder.init('AIzaSyD8LIhgvlYbX89FYSOLfM-z8MkuIwoUeYE');
-                    Geocoder.from({ latitude: position.coords.latitude, longitude: position.coords.longitude  })
-                        .then(json => {
-                            var addressComponent = json.results[0].address_components;
-                            console.log(addressComponent);
-                        })
-                        .catch(error => console.warn(error));
-                },
-                (error) => {
-                    // See error code charts below.
-                    console.log(error.code, error.message);
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
-        } else {
-            PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
-            PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
-            PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
-        }
-      this.initializeFeed();
-    });
+    this.ismounted = true;
+    this.initializeFeed();
   }
 
   componentWillUnmount(){
-    this.componentDidMount();
+    this.ismounted = false;
   }
 
   initializeFeed(){
-    let Feed;
-        firestore().collection('Jobs').doc('All').onSnapshot( j => {
-            if (j.exists) {
-                Feed = [...j.data().all];
-                for (let x of Feed) {
-                    firestore().collection('Users').doc(x.user).onSnapshot( u => {
-                        x.profilePicture = u.data().profilePicture;
-                        this.setState({ Feed });
-                    });
-                }
-            }
-        });
+    if (this.ismounted) {
+        request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
+          if (result === 'granted') {
+              Geolocation.getCurrentPosition(
+                  (position) => {
+                      Geocoder.init('AIzaSyD8LIhgvlYbX89FYSOLfM-z8MkuIwoUeYE');
+                      Geocoder.from({ latitude: position.coords.latitude, longitude: position.coords.longitude  })
+                          .then(json => {
+                              var addressComponent = json.results[0].address_components;
+                              console.log(addressComponent);
+                          })
+                          .catch(error => console.warn(error));
+                  },
+                  (error) => {
+                      // See error code charts below.
+                      console.log(error.code, error.message);
+                  },
+                  { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+              );
+    
+              let Feed;
+              firestore().collection('Jobs').doc('All').onSnapshot( j => {
+                  if (j.exists) {
+                      Feed = [...j.data().all];
+                      for (let x of Feed) {
+                          firestore().collection('Users').doc(x.user).onSnapshot( u => {
+                              x.profilePicture = u.data().profilePicture;
+                              this.setState({ Feed });
+                          });
+                      }
+                  }
+              });
+    
+    
+          } else {
+              PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
+              PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
+              PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+          }
+        this.initializeFeed();
+      });
+    }
   }
 
   render() {
@@ -108,27 +116,31 @@ export default class Feeds extends Component {
 }
 
 export class FeedDetails extends Component {
-  constructor(props){
+  constructor(props: any){
       super(props);
       this.state = {
         Details: {},
       };
   }
 
+  ismounted = false;
   componentDidMount(){
-    const { Details } = this.props.route.params;
-    this.initializeDetails(Details);
+    this.ismounted = true;
+    this.initializeDetails();
   }
 
   componentWillUnmount(){
-    this.componentDidMount();
+    this.ismounted = false;
   }
 
-initializeDetails(Details){
-    this.setState({Details});
-    AsyncStorage.getItem('user').then(user=>{
-      this.setState({user});
-    });
+initializeDetails(){
+  const { Details } = this.props.route.params;
+    if (this.ismounted) {
+      this.setState({Details});
+      AsyncStorage.getItem('user').then(user=>{
+        this.setState({user});
+      });
+    }
 }
 
   render(){
@@ -143,7 +155,7 @@ initializeDetails(Details){
 }
 
 class VacancyDetails extends Component {
-  constructor(props){
+  constructor(props: any){
     super(props);
     this.state = {
         Details: {},
@@ -154,19 +166,23 @@ class VacancyDetails extends Component {
     this.apply = this.apply.bind(this);
   }
 
+  ismounted = false;
   componentDidUpdate(){
+    this.ismounted = true;
     this.initializeDetails(this.props.details);
   }
 
   componentWillUnmount(){
-    this.componentDidMount();
+    this.ismounted = false;
 }
 
   initializeDetails(Details){
-      AsyncStorage.getItem('user').then(user=>{
-        this.setState({user,Details});
-      });
-      this.applied();
+      if (this.ismounted) {
+        AsyncStorage.getItem('user').then(user=>{
+          this.setState({user,Details});
+        });
+        this.applied();
+      }
   }
 
   apply(){
@@ -268,7 +284,7 @@ class VacancyDetails extends Component {
 }
 
 class AppealDetails extends Component {
-  constructor(props){
+  constructor(props: any){
     super(props);
     this.state = {
         Details: {},
@@ -279,19 +295,23 @@ class AppealDetails extends Component {
     this.apply = this.apply.bind(this);
   }
 
+  ismounted = false;
   componentDidUpdate(){
+    this.ismounted = true;
     this.initializeDetails(this.props.details);
   }
 
   componentWillUnmount(){
-    this.componentDidMount();
+    this.ismounted = false;
 }
 
   initializeDetails(Details){
-      AsyncStorage.getItem('user').then(user=>{
-        this.setState({user,Details});
-      });
-      this.applied();
+      if (this.ismounted) {
+        AsyncStorage.getItem('user').then(user=>{
+          this.setState({user,Details});
+        });
+        this.applied();
+      }
   }
 
   apply(){

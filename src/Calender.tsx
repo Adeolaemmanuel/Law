@@ -1,17 +1,34 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { View, Dimensions, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import { Agenda} from 'react-native-calendars';
 import { Styles } from './functions/styles';
 import { Button } from 'react-native-elements';
+import {
+    View,
+    Dimensions,
+    Text,
+    TouchableOpacity,
+    TextInput,
+} from 'react-native';
 
 
-export default class Calender extends Component {
-    constructor(props) { 
+
+interface CalendarProps {
+    navigation: any
+    view: any
+}
+
+interface CalendarState {
+    add: any
+}
+
+export default class Calender extends Component<CalendarProps, CalendarState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             add: false,
         };
-        this.modal = this.modal.bind(this)
+        this.modal = this.modal.bind(this);
     }
 
     modal = () => {
@@ -25,41 +42,51 @@ export default class Calender extends Component {
     render() {
         if (this.state.add) {
             return (
-                <Add modal={this.modal} />
-            )
+                <Add view={this.modal} />
+            );
         } else {
             return (
-                <Home modal={this.modal} />
-            )
+                <Home view={this.modal} />
+            );
         }
     }
 }
 
-class Home extends Component {
+
+interface HomeProps {
+    view: any
+}
+
+class Home extends Component<HomeProps> {
 
     render() {
         return (
-            <View style={Styles.container}>
+            <View style={[{backgroundColor: 'white'}, Styles.container]}>
                 <Agenda style={{ height: Dimensions.get('window').height }} />
                 <View style={Styles.modal}>
                     <TouchableOpacity
                         style={Styles.button}
-                        onPress={()=>this.props.modal()}
+                        onPress={()=>this.props.view()}
                     >
                         <Text style={[{ color: 'white', }, Styles.buttonText]}>Add Event</Text>
                     </TouchableOpacity>
                 </View>
-            </View>   
-         )
+            </View>
+         );
     }
 }
 
-class Add extends Component {
+
+interface AddProps {
+    view: any
+}
+
+class Add extends Component<AddProps> {
     render() {
         return (
-            <View style={[Styles.container]}>
+            <View style={[{backgroundColor: 'white'}, Styles.container]}>
                 <View>
-                    <TouchableOpacity style={Styles.button} onPress={()=>this.props.modal()}>
+                    <TouchableOpacity style={Styles.button} onPress={()=>this.props.view()}>
                         <Text style={[{ color: 'white' }, Styles.buttonText]}>Close</Text>
                     </TouchableOpacity>
                 </View>
@@ -75,7 +102,7 @@ class Add extends Component {
                 </View>
 
                 <Button title="Create" type="solid" buttonStyle={{ height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30, width: 180, alignSelf: 'center' }} />
-            </View>    
-        )
+            </View>
+        );
     }
 }

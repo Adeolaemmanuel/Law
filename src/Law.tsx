@@ -25,7 +25,7 @@ export default class Law extends Component {
 
 export class Lawyers extends Component {
 
-    constructor(props) {
+    constructor(props: any) {
         super(props);
         this.state = {
             lawyers: [],
@@ -33,20 +33,28 @@ export class Lawyers extends Component {
         };
     }
 
+    ismounted = false;
     componentDidMount() {
-        this.getLawyers();
+        this.ismounted = true;
+        this.initializeLaw();
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
-    search = (search) => {
+    initializeLaw(){
+        if (this.ismounted) {
+            this.getLawyers();
+        }
+    }
+
+    search = (search: string) => {
         this.setState({ search });
         this.state.lawyers.filter(lawyers => {
             if (lawyers.name.match(search)) {
                 if (search.length > 1) {
-                    this.setState({ lawyers: [lawyers] })
+                    this.setState({ lawyers: [lawyers] });
                 } else {
                     this.getLawyers();
                 }
@@ -58,7 +66,7 @@ export class Lawyers extends Component {
     user = firestore().collection('Users')
     getLawyers() {
         this.Admin.doc('Users').onSnapshot(email => {
-            let emails = [];
+            let emails: Array<string> = [];
             if (email.exists) {
                 emails = [...email._data.email];
                 let lawyers = [];

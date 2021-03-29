@@ -63,10 +63,10 @@ export default class Home extends Component {
             }
         });
         AsyncStorage.getItem('user').then(d => {
-            if (d != null) {
+            if (d !== 'null') {
                 this.props.navigation.push('Drawer')
             }
-        })
+        });
     }
 
     componentDidMount() {

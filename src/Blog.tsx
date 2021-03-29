@@ -19,11 +19,19 @@ import { ToastAndroid } from 'react-native';
 
 
 
-export default class Blog extends Component {
-    constructor(props) {
+interface PropsBlog {
+    navigation: any;
+}
+
+interface StateBlog {
+    Post: any
+}
+
+export default class Blog extends Component<PropsBlog, StateBlog> {
+    constructor(props: any) {
         super(props);
         this.state = {
-
+            Post: [],
         };
     }
 
@@ -39,16 +47,27 @@ export default class Blog extends Component {
     }
 }
 
-export class BlogPost extends Component {
-    constructor(props) {
+
+interface PropsBlogPost {
+    navigation: any;
+    source: any
+}
+
+interface StateBlogPost {
+    PicStyle: any
+    Post: {title: string, post: string, image: number[]}
+}
+
+export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
+    constructor(props: any) {
         super(props);
         this.state = {
-            picStyle: [],
-            post: { title: '', post: '', image: []},
+            PicStyle: [],
+            Post: { title: '', post: '', image: []},
         };
     }
 
-    imageHandler = (data,type,index = null,job = null) => {
+    imageHandler = (data: any,type: string,index = null,job: any = null) => {
         launchImageLibrary('photo', img =>{
             if (data.image.length <= 2 && type === 'add') {
                 data.image.push(img.uri);
@@ -63,7 +82,7 @@ export class BlogPost extends Component {
     }
 
     post = () => {
-        for (let x of this.state.post) {
+        for (let x of this.state.Post) {
             console.log(x);
         }
     }
@@ -91,7 +110,7 @@ export class BlogPost extends Component {
 
                         <View style={Styles.containerRow}>
                             {
-                                this.state.post.image.map((arr,ind)=>{
+                                this.state.Post.image.map((arr,ind)=>{
                                     return (
                                         <View style={[Styles.container]}>
                                             <Badge value="X" status="error" key={`blogB-${ind}`} containerStyle={{margin: 10, padding: 10}}  />
@@ -104,7 +123,7 @@ export class BlogPost extends Component {
                             }
                         </View>
 
-                        <TouchableOpacity onPress={()=> this.imageHandler(this.state.post,'add',0,'post')} style={{ alignSelf: 'flex-end', margin: 10 }}>
+                        <TouchableOpacity onPress={()=> this.imageHandler(this.state.Post,'add',0,'post')} style={{ alignSelf: 'flex-end', margin: 10 }}>
                             <Image source={require('./assets/img/photo.png')} style={{ width: 50, height: 50 }} />
                         </TouchableOpacity>
 

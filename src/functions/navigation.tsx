@@ -27,8 +27,9 @@ import feed from '../assets/img/feed.png';
 import user from '../assets/img/user.png';
 import bell from '../assets/img/bell.png';
 import chat from '../assets/img/chat.png';
-import logout from '../assets/img/logout.png';
+import settings from '../assets/img/settings.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Settings from '../Settings';
 
 
 const Stack = createStackNavigator();
@@ -112,6 +113,15 @@ const Drawer = () => {
                         <Image source={wallet} style={{width: 30, height: 30}} />
                     ),
                 }} component={ Wallet } 
+                />
+                <Draw.Screen name="Settings" options={{
+                    title: 'Settings',
+                    headerShown: true,
+                    headerTitleAlign: 'center',
+                    drawerIcon: ()=>(
+                        <Image source={settings} style={{width: 30, height: 30}} />
+                    ),
+                }} component={ Settings } 
                 />
                 
             </Draw.Navigator>

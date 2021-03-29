@@ -20,8 +20,25 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-export default class Register extends Component {
-  constructor(props) {
+
+interface RegisterProps {
+    navigation: any
+}
+
+interface RegisterState {
+    step1D: any
+    step2D: any
+    step3D: any
+    step1: boolean
+    step2: boolean
+    step3: boolean
+    step4: boolean
+    stepColor: string[]
+}
+
+
+export default class Register extends Component<RegisterProps, RegisterState> {
+  constructor(props: any) {
     super(props);
     this.state = {
         step1D: { firstname: null, lastname: null, email: null, password: null, number: null },
@@ -35,39 +52,49 @@ export default class Register extends Component {
     };
   }
 
-    componentDidMount() {
-        request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
+    ismounted = false;
 
-            if (result === 'granted') {
-                Geolocation.getCurrentPosition(
-                    (position) => {
-                        Geocoder.init('AIzaSyD8LIhgvlYbX89FYSOLfM-z8MkuIwoUeYE');
-                        Geocoder.from({ latitude: position.coords.latitude, longitude: position.coords.longitude })
-                            .then(json => {
-                                var addressComponent = json.results[0].address_components;
-                                console.log(addressComponent);
-                            })
-                            .catch(error => console.warn(error));
-                    },
-                    (error) => {
-                        // See error code charts below.
-                        console.log(error.code, error.message);
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-                );
-            } else {
-                PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
-                PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
-                PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
-            }
-        });
+    componentDidMount() {
+        this.ismounted = true;
+        this.initializeReg();
     }
+
+    initializeReg(){
+        if (this.ismounted) {
+            request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
+
+                if (result === 'granted') {
+                    Geolocation.getCurrentPosition(
+                        (position) => {
+                            Geocoder.init('AIzaSyD8LIhgvlYbX89FYSOLfM-z8MkuIwoUeYE');
+                            Geocoder.from({ latitude: position.coords.latitude, longitude: position.coords.longitude })
+                                .then(json => {
+                                    var addressComponent = json.results[0].address_components;
+                                    console.log(addressComponent);
+                                })
+                                .catch(error => console.warn(error));
+                        },
+                        (error) => {
+                            // See error code charts below.
+                            console.log(error.code, error.message);
+                        },
+                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                    );
+                } else {
+                    PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
+                    PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
+                    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+                }
+            });
+        }
+    }
+
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
-    formData(data,prev,next,type){
+    formData(data: any,prev: any,next: any,type: any){
         if (type === 'next') {
             for (let d in data) {
                 if (data[d] !== null) {
@@ -92,7 +119,7 @@ export default class Register extends Component {
   Admin = firestore().collection('Admin')
   Users = firestore().collection('Users')
 
-    Register = (data) => {
+    Register = (data: any) => {
         data.gender.substr(0, 1).toUpperCase();
         data.firstname.substr(0, 1).toUpperCase();
         data.lastname.substr(0, 1).toUpperCase();

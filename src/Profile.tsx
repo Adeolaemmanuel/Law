@@ -1,4 +1,12 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
+import * as fn from './functions/component';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Styles } from './functions/styles';
+import storage from '@react-native-firebase/storage';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Button } from 'react-native-elements';
 import {
     View,
     Text,
@@ -10,17 +18,22 @@ import {
     ScrollView,
     ToastAndroid,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Styles } from './functions/styles';
-import storage from '@react-native-firebase/storage';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { Button } from 'react-native-elements';
 
 
 
-export default class Profile extends Component {
-    constructor(props) {
+interface ProfileProps {
+    navigation: any
+    route: any
+}
+
+interface ProifleState {
+    me: any
+    profilePic: string
+    followBtnText: string
+}
+
+export default class Profile extends Component<ProfileProps, ProifleState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             me: {
@@ -29,68 +42,79 @@ export default class Profile extends Component {
                 end: ' ', experience: ' ', degree: ' ', certificate: ' ',
                 licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ', gender: ' ',
             },
-            profilePic: null,
+            profilePic: 'null',
+            followBtnText: 'Follow',
         };
     }
 
+
+    ismounted = false;
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', () => { return true;});
-        const { email } = this.props.route.params;
-        let user = firestore().collection('Users');
-        user.doc(email).onSnapshot( users => {
-            if (users.exists) {
-                let me = { ...this.state.me };
-                me.firstname = users.data().firstname;
-                me.lastname = users.data().lastname;
-                me.country = users.data().country;
-                me.state = users.data().state;
-                me.university = users.data().education;
-                me.start = users.data().start;
-                me.end = users.data().end;
-                me.degree = users.data().degree;
-                me.certificate = users.data().certificate;
-                me.experience = users.data().experience;
-                me.number = users.data().number;
-                me.licenceNo = users.data().licenceNo;
-                me.company = users.data().company;
-                me.email = users.data().email;
-                me.gender = users.data().gender;
-                me.workStart = users.data().workStart;
-                me.workEnd = users.data().workEnd;
+        this.ismounted = true;
+        this.initializeProfile();
+    }
 
-                let profilePic = users.data().profilePicture;
-                if (me.gender === 'Male' && profilePic === undefined) {
-                    profilePic = require('./assets/img/profileM.png')
-                    this.setState({ profilePic });
-                } else if (me.gender === 'Female' && profilePic === undefined) {
-                    profilePic = require('./assets/img/profileW.png')
-                    this.setState({ profilePic });
-                } else {
-                    this.setState({ profilePic });
-                }
+    initializeProfile(){
+        if (this.ismounted) {
+            BackHandler.addEventListener('hardwareBackPress', () => { return true;});
+            const { email } = this.props.route.params;
+            let user = firestore().collection('Users');
+            fn.sentRequest(this.friends,email, this.setHandlerState);
+            fn.confirmedRequest(this.friends,email, this.setHandlerState);
+            user.doc(email).onSnapshot( users => {
+                if (users.exists) {
+                    let me = { ...this.state.me };
+                    me.firstname = users.data().firstname;
+                    me.lastname = users.data().lastname;
+                    me.country = users.data().country;
+                    me.state = users.data().state;
+                    me.university = users.data().education;
+                    me.start = users.data().start;
+                    me.end = users.data().end;
+                    me.degree = users.data().degree;
+                    me.certificate = users.data().certificate;
+                    me.experience = users.data().experience;
+                    me.number = users.data().number;
+                    me.licenceNo = users.data().licenceNo;
+                    me.company = users.data().company;
+                    me.email = users.data().email;
+                    me.gender = users.data().gender;
+                    me.workStart = users.data().workStart;
+                    me.workEnd = users.data().workEnd;
 
-                for (let x in me) {
-                    if (me[x] === undefined) {
-                        me[x] = 'none';
+                    let profilePic = users.data().profilePicture;
+                    if (me.gender === 'Male' && profilePic === undefined) {
+                        profilePic = require('./assets/img/profileM.png')
+                        this.setState({ profilePic });
+                    } else if (me.gender === 'Female' && profilePic === undefined) {
+                        profilePic = require('./assets/img/profileW.png')
+                        this.setState({ profilePic });
+                    } else {
+                        this.setState({ profilePic });
                     }
+
+                    for (let x in me) {
+                        if (me[x] === undefined) {
+                            me[x] = 'none';
+                        }
+                    }
+                    this.setState({ me });
                 }
-                this.setState({ me });
-            }
-        });
-
-
+            });
+        }
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
     user = firestore().collection('Users')
-    follow = firestore().collection('Follows')
+    friends = firestore().collection('Friends')
 
-    profileButtonHandler = (type, data) => {
-
+    setHandlerState = (state: any,data: any) => {
+        this.setState({[state]: data});
     }
+
 
     render() {
         return (
@@ -105,13 +129,13 @@ export default class Profile extends Component {
                     <View style={Styles.container}>
                         <TouchableOpacity
                             style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                            onPress={this.switch}
+                            onPress={()=> fn.profileButtonHandlerModule(this.state.followBtnText,this.state.me.email, this.setHandlerState)}
                         >
-                            <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, margin: 10 }}>Follow</Text>
+                            <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, margin: 10 }}>{this.state.followBtnText}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                            onPress={this.upload}
+                            //onPress={this.upload}
                         >
                             <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, padding: 10 }}>Message</Text>
                         </TouchableOpacity>
@@ -231,8 +255,19 @@ export default class Profile extends Component {
     }
 }
 
-export class Me extends Component {
-  constructor(props) {
+
+interface MeProps {
+    navigation: any
+}
+
+interface MeState {
+    me: any
+    profilePic: string
+    followers: number
+    following: number
+}
+export class Me extends Component<MeProps, MeState> {
+  constructor(props: any) {
     super(props);
       this.state = {
           me: {
@@ -240,67 +275,79 @@ export class Me extends Component {
               state: ' ', university: ' ', start: ' ', number: ' ',
               end: ' ', experience: ' ', degree: ' ', certificate: ' ',
               licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ',
-              followers: 0, following: 0,
           },
-          profilePic: null,
+          profilePic: '',
+          followers: 0,
+          following: 0,
       };
   }
 
+  ismounted = false;
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', () => { return true});
+        this.ismounted = true;
+        this.initializeMe();
+    }
 
-        AsyncStorage.getItem('user').then(res => {
-            let user = firestore().collection('Users');
-            // eslint-disable-next-line no-shadow
-            user.doc(res).onSnapshot( user => {
-                if (user.exists) {
-                    let me = { ...this.state.me }
-                    me.firstname = user.data().firstname;
-                    me.lastname = user.data().lastname;
-                    me.country = user.data().country;
-                    me.state = user.data().state;
-                    me.university = user.data().education;
-                    me.start = user.data().start;
-                    me.end = user.data().end;
-                    me.degree = user.data().degree;
-                    me.certificate = user.data().certificate;
-                    me.experience = user.data().experience;
-                    me.number = user.data().number;
-                    me.licenceNo = user.data().licenceNo;
-                    me.company = user.data().company;
-                    me.email = user.data().email;
-                    me.gender = user.data().gender;
-                    me.following = user.data().following;
-                    me.followers = user.data().followers;
-                    me.workStart = user.data().workStart;
-                    me.workEnd = user.data().workEnd;
+    initializeMe(){
+        if (this.ismounted) {
+            BackHandler.addEventListener('hardwareBackPress', () => { return true;});
+            AsyncStorage.getItem('user').then(res => {
+                fn.recievedRequest(this.friends,res,this.setHandlerState);
+                let user = firestore().collection('Users');
+                // eslint-disable-next-line no-shadow
+                user.doc(res).onSnapshot( user => {
+                    if (user.exists) {
+                        let me = { ...this.state.me }
+                        me.firstname = user.data().firstname;
+                        me.lastname = user.data().lastname;
+                        me.country = user.data().country;
+                        me.state = user.data().state;
+                        me.university = user.data().education;
+                        me.start = user.data().start;
+                        me.end = user.data().end;
+                        me.degree = user.data().degree;
+                        me.certificate = user.data().certificate;
+                        me.experience = user.data().experience;
+                        me.number = user.data().number;
+                        me.licenceNo = user.data().licenceNo;
+                        me.company = user.data().company;
+                        me.email = user.data().email;
+                        me.gender = user.data().gender;
+                        me.workStart = user.data().workStart;
+                        me.workEnd = user.data().workEnd;
 
-                    let profilePic = user.data().profilePicture;
-                    if (me.gender.substr(0,1) === 'M' && profilePic === undefined) {
-                        profilePic = require('./assets/img/profileM.png')
-                        this.setState({ profilePic });
-                    } else if (me.gender.substr(0, 1) === 'F' && profilePic === undefined) {
-                        profilePic = require('./assets/img/profileW.png');
-                        this.setState({ profilePic });
-                    } else {
-                        this.setState({ profilePic });
-                    }
-
-                    for (let x in me) {
-                        if (me[x] === undefined) {
-                            me[x] = 'none';
+                        let profilePic = user.data().profilePicture;
+                        if (me.gender.substr(0,1) === 'M' && profilePic === undefined) {
+                            profilePic = require('./assets/img/profileM.png')
+                            this.setState({ profilePic });
+                        } else if (me.gender.substr(0, 1) === 'F' && profilePic === undefined) {
+                            profilePic = require('./assets/img/profileW.png');
+                            this.setState({ profilePic });
+                        } else {
+                            this.setState({ profilePic });
                         }
+
+                        for (let x in me) {
+                            if (me[x] === undefined) {
+                                me[x] = 'none';
+                            }
+                        }
+                        this.setState({ me });
                     }
-                    this.setState({ me });
-                }
+                });
             });
-        });
-
-
+        }
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
+    }
+
+    user = firestore().collection('Users')
+    friends = firestore().collection('Friends')
+
+    setHandlerState = (state,data) => {
+        this.setState({[state]: data});
     }
 
     upload = () => {
@@ -476,8 +523,18 @@ export class Me extends Component {
     }
 }
 
-export class Edit extends Component {
-    constructor(props) {
+
+
+interface EditProps {
+    navigation: any
+}
+
+interface EditState {
+    me: any
+}
+
+export class Edit extends Component<EditProps, EditState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             me: {
@@ -490,49 +547,56 @@ export class Edit extends Component {
         };
     }
 
+
+    ismounted = false;
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', () => { return true});
+        this.ismounted = true;
+        this.initiazileEdit();
+    }
 
-        AsyncStorage.getItem('user').then(res => {
-            let user = firestore().collection('Users');
-            user.doc(res).onSnapshot( user => {
-                if (user.exists) {
-                    let me = { ...this.state.me }
-                    me.firstname = user.data().firstname;
-                    me.lastname = user.data().lastname;
-                    me.country = user.data().country;
-                    me.state = user.data().state;
-                    me.university = user.data().education;
-                    me.start = user.data().start;
-                    me.end = user.data().end;
-                    me.degree = user.data().degree;
-                    me.certificate = user.data().certificate;
-                    me.experience = user.data().experience;
-                    me.number = user.data().number;
-                    me.licenceNo = user.data().licenceNo;
-                    me.company = user.data().company;
-                    me.email = user.data().email;
-                    me.gender = user.data().gender;
-                    me.following = user.data().following;
-                    me.followers = user.data().followers;
-                    me.workStart = user.data().workStart;
-                    me.workEnd = user.data().workEnd;
+    initiazileEdit(){
+        if (this.ismounted) {
+            BackHandler.addEventListener('hardwareBackPress', () => { return true;});
 
-                    for (let x in me) {
-                        if (me[x] === undefined) {
-                            me[x] = 'none';
+            AsyncStorage.getItem('user').then(res => {
+                let user = firestore().collection('Users');
+                user.doc(res).onSnapshot( user => {
+                    if (user.exists) {
+                        let me = { ...this.state.me }
+                        me.firstname = user.data().firstname;
+                        me.lastname = user.data().lastname;
+                        me.country = user.data().country;
+                        me.state = user.data().state;
+                        me.university = user.data().education;
+                        me.start = user.data().start;
+                        me.end = user.data().end;
+                        me.degree = user.data().degree;
+                        me.certificate = user.data().certificate;
+                        me.experience = user.data().experience;
+                        me.number = user.data().number;
+                        me.licenceNo = user.data().licenceNo;
+                        me.company = user.data().company;
+                        me.email = user.data().email;
+                        me.gender = user.data().gender;
+                        me.following = user.data().following;
+                        me.followers = user.data().followers;
+                        me.workStart = user.data().workStart;
+                        me.workEnd = user.data().workEnd;
+
+                        for (let x in me) {
+                            if (me[x] === undefined) {
+                                me[x] = 'none';
+                            }
                         }
+                        this.setState({ me });
                     }
-                    this.setState({ me });
-                }
+                });
             });
-        });
-
-
+        }
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
     update = () => {

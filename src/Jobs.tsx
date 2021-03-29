@@ -20,36 +20,52 @@ import {
     } from 'react-native-elements';
 import {Styles} from './functions/styles';
 
-export default class Jobs extends Component {
-    constructor(props){
+interface JobProps {
+    navigation: any
+}
+
+interface JobState {
+    Jobs: any[]
+}
+
+export default class Jobs extends Component<JobProps, JobState> {
+    constructor(props: any){
         super(props);
         this.state = {
             Jobs: [],
         };
     }
 
+    ismounted: boolean = false;
     componentDidMount(){
-        let Job;
-        firestore().collection('Jobs').doc('All').onSnapshot( j => {
-            if (j.exists) {
-                Job = [...j.data().all];
-                AsyncStorage.getItem('user').then( u =>{
-                    for (let x of Job) {
-                        if (x.user === u) {
-                            // eslint-disable-next-line no-shadow
-                            firestore().collection('Users').doc(x.user).onSnapshot( u => {
-                                x.profilePicture = u.data().profilePicture;
-                                this.setState({Jobs: Job});
-                            });
+        this.ismounted = true;
+        this.initializeJobs();
+    }
+
+    initializeJobs(){
+        if (this.ismounted) {
+            let Job: any;
+            firestore().collection('Jobs').doc('All').onSnapshot( j => {
+                if (j.exists) {
+                    Job = [...j.data().all];
+                    AsyncStorage.getItem('user').then( u =>{
+                        for (let x of Job) {
+                            if (x.user === u) {
+                                // eslint-disable-next-line no-shadow
+                                firestore().collection('Users').doc(x.user).onSnapshot( u => {
+                                    x.profilePicture = u.data().profilePicture;
+                                    this.setState({Jobs: Job});
+                                });
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
     render() {
@@ -92,25 +108,39 @@ export default class Jobs extends Component {
     }
 }
 
-export class JobDetails extends Component {
-    constructor(props){
+
+interface JobDetProps {
+    navigation: any
+    route: any
+}
+
+interface JobDetState {
+    Details: any
+}
+
+export class JobDetails extends Component<JobDetProps, JobDetState> {
+    constructor(props: any){
         super(props);
         this.state = {
             Details: {},
         };
     }
 
+    ismounted = false
     componentDidMount(){
-        const { Details } = this.props.route.params;
-        this.initializeDetails(Details);
+        this.ismounted = true;
+        this.initializeDetails();
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
-    initializeDetails(Details){
-        this.setState({Details});
+    initializeDetails(){
+        const { Details } = this.props.route.params;
+        if (this.ismounted) {
+            this.setState({Details});
+        }
     }
 
     render(){
@@ -173,45 +203,59 @@ export class JobDetails extends Component {
     }
 }
 
-export class Applied extends Component {
-    constructor(props) {
+
+interface JobAppProps {
+    navigation: any
+    route: any
+}
+
+interface JobAppState {
+    applied: any[]
+}
+
+export class Applied extends Component<JobAppProps, JobAppState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             applied: [],
         };
     }
 
+    ismounted: boolean = false;
     componentDidMount(){
+        this.ismounted = true;
         this.initailizeApplied();
     }
 
     componentWillUnmount(){
-        this.componentDidMount();
+        this.ismounted = false;
     }
 
     initailizeApplied(){
         const { id } = this.props.route.params;
-        let apply = firestore().collection('Jobs');
-        let applied;
-        apply.doc('Applied').onSnapshot(a=>{
-            if (a.exists) {
-                applied = [...a.data().applied];
-                for (let x of applied) {
-                    if (id === x.id) {
-                        firestore().collection('Users').doc(x.appliedUser).get()
-                        .then(u=>{
-                            if (u.exists) {
-                                x.profilePicture = u.data().profilePicture;
-                                x.name = `${u.data().firstname} ${u.data().lastname}`;
-                                x.country = u.data().country;
-                                x.state = u.data().state;
-                            }
-                            this.setState({applied: [x]});
-                        });
+        if (this.ismounted) {
+            let apply = firestore().collection('Jobs');
+            let applied;
+            apply.doc('Applied').onSnapshot(a=>{
+                if (a.exists) {
+                    applied = [...a.data().applied];
+                    for (let x of applied) {
+                        if (id === x.id) {
+                            firestore().collection('Users').doc(x.appliedUser).get()
+                            .then(u=>{
+                                if (u.exists) {
+                                    x.profilePicture = u.data().profilePicture;
+                                    x.name = `${u.data().firstname} ${u.data().lastname}`;
+                                    x.country = u.data().country;
+                                    x.state = u.data().state;
+                                }
+                                this.setState({applied: [x]});
+                            });
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     render(){

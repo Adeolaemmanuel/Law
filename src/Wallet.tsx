@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
 import {ScrollView, View, Text} from 'react-native';
+import { Styles } from './functions/styles';
 import { Card } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
-import { Styles } from './functions/styles';
 
 
-export default class Wallet extends Component {
-    constructor(props) {
+interface WalletProps {
+    navigation: any
+}
+
+interface WalletState {
+    balance: number
+}
+
+
+export default class Wallet extends Component<WalletProps, WalletState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             balance: 0,
-        }
+        };
     }
-    
+
+
+
     render() {
         return (
             <ScrollView>
