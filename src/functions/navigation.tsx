@@ -21,16 +21,7 @@ import Blog, { BlogPost } from '../Blog';
 import Message from '../Message';
 import Law, { Lawyers } from '../Law';
 import Jobs, {Applied, JobDetails} from '../Jobs';
-import dash from '../assets/img/dashboard.png';
-import wallet from '../assets/img/wallet.png';
-import feed from '../assets/img/feed.png';
-import user from '../assets/img/user.png';
-import bell from '../assets/img/bell.png';
-import chat from '../assets/img/chat.png';
-import settings from '../assets/img/settings.png';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Settings from '../Settings';
-
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,7 +34,7 @@ const Notifications_Stack = createStackNavigator();
 const Messages_Stack = createStackNavigator();
 
 
-const Dash_Screen = ({navigation}) => {
+const Dash_Screen = () => {
     return (
         <Dash_Stack.Navigator>
             <Dash_Stack.Screen name="Dashboard" options={{headerTitleAlign: 'center', headerShown: false}}  component={ Dash } />
@@ -51,34 +42,34 @@ const Dash_Screen = ({navigation}) => {
     );
 };
 
-const Feeds_Screen = ({navigation}) => {
+const Feeds_Screen = () => {
     return (
         <Feeds_Stack.Navigator>
-            <Feeds_Stack.Screen name="Feeds" options={{headerTitleAlign: 'center', headerLeft: false}}  component={ Feeds } />
+            <Feeds_Stack.Screen name="Feeds" options={{headerTitleAlign: 'center', headerLeft: ()=> false}}  component={ Feeds } />
         </Feeds_Stack.Navigator>
     );
 };
 
-const Me_Screen = ({navigation}) => {
+const Me_Screen = () => {
     return (
         <Me_Stack.Navigator>
-            <Me_Stack.Screen name="Me" options={{headerTitleAlign: 'center', headerLeft: false}}  component={ Me } />
+            <Me_Stack.Screen name="Me" options={{headerTitleAlign: 'center', headerLeft: ()=> false}}  component={ Me } />
         </Me_Stack.Navigator>
     );
 };
 
-const Notifications_Screen = ({navigation}) => {
+const Notifications_Screen = () => {
     return (
         <Notifications_Stack.Navigator>
-            <Notifications_Stack.Screen name="Notification" options={{headerTitleAlign: 'center', headerLeft: false}}  component={ Notification } />
+            <Notifications_Stack.Screen name="Notification" options={{headerTitleAlign: 'center', headerLeft: ()=> false}}  component={ Notification } />
         </Notifications_Stack.Navigator>
     );
 };
 
-const Message_Screen = ({navigation}) => {
+const Message_Screen = () => {
     return (
         <Messages_Stack.Navigator>
-            <Messages_Stack.Screen name="Message" options={{headerTitleAlign: 'center', headerLeft: false}}  component={ Message } />
+            <Messages_Stack.Screen name="Message" options={{headerTitleAlign: 'center', headerLeft: ()=> false}}  component={ Message } />
         </Messages_Stack.Navigator>
     );
 };
@@ -102,7 +93,7 @@ const Drawer = () => {
                     headerShown: true,
                     headerTitleAlign: 'center',
                     drawerIcon: ()=>(
-                        <Image source={dash} style={{width: 30, height: 30}} />
+                        <Image source={require('../assets/img/dashboard.png')} style={{width: 30, height: 30}} />
                     ),
                     }} component={ Dash_Screen } />
                 <Draw.Screen name="Wallet" options={{
@@ -110,7 +101,7 @@ const Drawer = () => {
                     headerShown: true,
                     headerTitleAlign: 'center',
                     drawerIcon: ()=>(
-                        <Image source={wallet} style={{width: 30, height: 30}} />
+                        <Image source={require('../assets/img/wallet.png')} style={{width: 30, height: 30}} />
                     ),
                 }} component={ Wallet } 
                 />
@@ -119,7 +110,7 @@ const Drawer = () => {
                     headerShown: true,
                     headerTitleAlign: 'center',
                     drawerIcon: ()=>(
-                        <Image source={settings} style={{width: 30, height: 30}} />
+                        <Image source={require('../assets/img/settings.png')} style={{width: 30, height: 30}} />
                     ),
                 }} component={ Settings } 
                 />
@@ -129,7 +120,7 @@ const Drawer = () => {
     );
 };
 
-const getHeaderTitle = (route,pram) => {
+const getHeaderTitle = (route: any, pram: any) => {
     if (pram === 'tabs'){
         const setUp = getFocusedRouteNameFromRoute(route) ?? 'Profile';
         switch (setUp) {
@@ -158,7 +149,7 @@ const Tabs = () => {
                 component={ Drawer } 
                 options={{
                     tabBarIcon: ()=>(
-                        <Image source={dash} style={{width: 25, height: 25,}} />
+                        <Image source={ require('../assets/img/dashboard.png')} style={{width: 25, height: 25}} />
                     ),
                 }} 
                 />
@@ -167,23 +158,23 @@ const Tabs = () => {
                 component={ Feeds_Screen } 
                 options={{
                     tabBarIcon: ()=>(
-                        <Image source={ feed } style={{width: 25, height: 25,}} />
+                        <Image source={ require('../assets/img/feed.png') } style={{width: 25, height: 25}} />
                     ),
                 }} 
                 />
                 <Tab.Screen name="Me"  component={ Me_Screen } options={{
                     tabBarIcon: ()=>(
-                        <Image source={ user } style={{width: 25, height: 25,}} />
+                        <Image source={ require('../assets/img/user.png') } style={{width: 25, height: 25}} />
                     ),
                 }} />
                 <Tab.Screen name="Notification" component={ Notifications_Screen } options={{
                     tabBarIcon: ()=>(
-                        <Image source={ bell } style={{width: 25, height: 25,}} />
+                        <Image source={ require('../assets/img/bell.png') } style={{width: 25, height: 25}} />
                     ),
                 }} />
                 <Tab.Screen name="Message" component={ Message_Screen }  options={{
                     tabBarIcon: ()=>(
-                        <Image source={ chat } style={{width: 25, height: 25,}} />
+                        <Image source={ require('../assets/img/chat.png') } style={{width: 25, height: 25}} />
                     ),
                 }}/>
             </Tab.Navigator>
@@ -191,8 +182,17 @@ const Tabs = () => {
     );
 };
 
-class Nav extends Component {
-    constructor(props) {
+
+interface NavProps {
+    navigation: any,
+    route: any
+}
+
+interface NavState {
+    modal: boolean
+}
+class Nav extends Component<NavProps, NavState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             modal: false,
@@ -216,7 +216,7 @@ class Nav extends Component {
                 />
                 <Stack.Screen 
                 name="Drawer" 
-                options = {({route})=>({
+                options = {()=>({
                     headerShown: false,
                 })} component =  { Tabs } 
                 />

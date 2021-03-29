@@ -276,7 +276,7 @@ export class Me extends Component<MeProps, MeState> {
               end: ' ', experience: ' ', degree: ' ', certificate: ' ',
               licenceNo: ' ', company: ' ', workStart: ' ', workEnd: ' ',
           },
-          profilePic: '',
+          profilePic: 'null',
           followers: 0,
           following: 0,
       };
@@ -291,11 +291,11 @@ export class Me extends Component<MeProps, MeState> {
     initializeMe(){
         if (this.ismounted) {
             BackHandler.addEventListener('hardwareBackPress', () => { return true;});
-            AsyncStorage.getItem('user').then(res => {
-                fn.recievedRequest(this.friends,res,this.setHandlerState);
+            AsyncStorage.getItem('user').then((res: any) => {
+                fn.recievedRequest(this.friends, res ,this.setHandlerState);
                 let user = firestore().collection('Users');
                 // eslint-disable-next-line no-shadow
-                user.doc(res).onSnapshot( user => {
+                user.doc(res).onSnapshot( (user: any) => {
                     if (user.exists) {
                         let me = { ...this.state.me }
                         me.firstname = user.data().firstname;
@@ -346,20 +346,20 @@ export class Me extends Component<MeProps, MeState> {
     user = firestore().collection('Users')
     friends = firestore().collection('Friends')
 
-    setHandlerState = (state,data) => {
+    setHandlerState = (state: string, data: string) => {
         this.setState({[state]: data});
     }
 
     upload = () => {
         launchImageLibrary('photo', img => {
-            let profilePic = img.uri;
+            let profilePic: any = img.uri;
             this.setState({ profilePic });
             let user = firestore().collection('Users');
 
             AsyncStorage.getItem('user').then(d => {
                 if (d != null) {
                     const reference = storage().ref(`${d}/profile`);
-                    reference.putFile(img.uri).then(() => {
+                    reference.putFile(profilePic).then(() => {
                         reference.getDownloadURL().then(i => {
                             user.doc(d).update({
                                 profilePicture: i,
@@ -558,9 +558,9 @@ export class Edit extends Component<EditProps, EditState> {
         if (this.ismounted) {
             BackHandler.addEventListener('hardwareBackPress', () => { return true;});
 
-            AsyncStorage.getItem('user').then(res => {
+            AsyncStorage.getItem('user').then((res: any) => {
                 let user = firestore().collection('Users');
-                user.doc(res).onSnapshot( user => {
+                user.doc(res).onSnapshot( (user: any) => {
                     if (user.exists) {
                         let me = { ...this.state.me }
                         me.firstname = user.data().firstname;
@@ -601,7 +601,7 @@ export class Edit extends Component<EditProps, EditState> {
 
     update = () => {
         let user = firestore().collection('Users');
-        AsyncStorage.getItem('user').then(res => {
+        AsyncStorage.getItem('user').then((res: any) => {
             user.doc(res).update(this.state.me).then(() => {
                 ToastAndroid.show('Profile Updated', ToastAndroid.TOP);
             });
@@ -804,3 +804,5 @@ export class Edit extends Component<EditProps, EditState> {
         );
     }
 }
+
+

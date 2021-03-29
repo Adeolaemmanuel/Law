@@ -24,7 +24,7 @@ import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Feeds extends Component {
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       Feed: [],
@@ -61,21 +61,20 @@ export default class Feeds extends Component {
                   },
                   { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
               );
-    
-              let Feed;
-              firestore().collection('Jobs').doc('All').onSnapshot( j => {
+
+              let Feed: any;
+              firestore().collection('Jobs').doc('All').onSnapshot( (j: any) => {
                   if (j.exists) {
                       Feed = [...j.data().all];
                       for (let x of Feed) {
-                          firestore().collection('Users').doc(x.user).onSnapshot( u => {
+                          firestore().collection('Users').doc(x.user).onSnapshot( (u: any) => {
                               x.profilePicture = u.data().profilePicture;
                               this.setState({ Feed });
                           });
                       }
                   }
               });
-    
-    
+
           } else {
               PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
               PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
@@ -115,11 +114,22 @@ export default class Feeds extends Component {
   }
 }
 
-export class FeedDetails extends Component {
+
+interface FeedDetProps {
+  route: any,
+  navigation: any
+  details: any
+}
+interface FeedDetState {
+  Details: any
+  user: string
+}
+export class FeedDetails extends Component<FeedDetProps, FeedDetState> {
   constructor(props: any){
       super(props);
       this.state = {
         Details: {},
+        user: '',
       };
   }
 
@@ -137,7 +147,7 @@ initializeDetails(){
   const { Details } = this.props.route.params;
     if (this.ismounted) {
       this.setState({Details});
-      AsyncStorage.getItem('user').then(user=>{
+      AsyncStorage.getItem('user').then((user: any)=>{
         this.setState({user});
       });
     }
@@ -154,13 +164,25 @@ initializeDetails(){
 
 }
 
-class VacancyDetails extends Component {
+
+interface vacancyProps {
+  route: any,
+  navigation: any
+  details: any
+}
+interface vacancyState {
+  Details: any
+  user: string
+  disableBtn: boolean
+  btnText: string
+}
+class VacancyDetails extends Component<vacancyProps, vacancyState> {
   constructor(props: any){
     super(props);
     this.state = {
         Details: {},
         user: '',
-        disableBtn: '',
+        disableBtn: false,
         btnText: 'APPLY',
     };
     this.apply = this.apply.bind(this);
@@ -176,9 +198,9 @@ class VacancyDetails extends Component {
     this.ismounted = false;
 }
 
-  initializeDetails(Details){
+  initializeDetails(Details: any){
       if (this.ismounted) {
-        AsyncStorage.getItem('user').then(user=>{
+        AsyncStorage.getItem('user').then((user: any)=>{
           this.setState({user,Details});
         });
         this.applied();
@@ -189,7 +211,7 @@ class VacancyDetails extends Component {
     let apply = firestore().collection('Jobs');
     let jobs = {id: this.state.Details.id, appliedUser: this.state.user, jobOwner: this.state.Details.user, job: this.state.Details.job};
     let applied;
-    apply.doc('Applied').get().then(e=>{
+    apply.doc('Applied').get().then((e: any)=>{
       if (e.exists) {
         if (jobs.jobOwner !== jobs.appliedUser) {
           console.log('yes');
@@ -211,7 +233,7 @@ class VacancyDetails extends Component {
 
   applied(){
     let jobs = firestore().collection('Jobs');
-    jobs.doc('Applied').get().then(a=>{
+    jobs.doc('Applied').get().then((a: any)=>{
       if (a.exists) {
         let applyed = [...a.data().applied];
         for (let x of applyed) {
@@ -283,13 +305,25 @@ class VacancyDetails extends Component {
   }
 }
 
-class AppealDetails extends Component {
+
+interface appliedProps {
+  route: any,
+  navigation: any
+  details: any
+}
+interface appliedState {
+  Details: any
+  user: string
+  disableBtn: boolean
+  btnText: string
+}
+class AppealDetails extends Component<appliedProps, appliedState> {
   constructor(props: any){
     super(props);
     this.state = {
         Details: {},
         user: '',
-        disableBtn: '',
+        disableBtn: false,
         btnText: 'APPLY',
     };
     this.apply = this.apply.bind(this);
@@ -305,9 +339,9 @@ class AppealDetails extends Component {
     this.ismounted = false;
 }
 
-  initializeDetails(Details){
+  initializeDetails(Details: any){
       if (this.ismounted) {
-        AsyncStorage.getItem('user').then(user=>{
+        AsyncStorage.getItem('user').then((user: any)=>{
           this.setState({user,Details});
         });
         this.applied();
@@ -318,7 +352,7 @@ class AppealDetails extends Component {
     let apply = firestore().collection('Jobs');
     let jobs = {id: this.state.Details.id, appliedUser: this.state.user, jobOwner: this.state.Details.user, job: this.state.Details.job};
     let applied;
-    apply.doc('Applied').get().then(e=>{
+    apply.doc('Applied').get().then((e: any)=>{
       if (e.exists) {
         if (jobs.jobOwner !== jobs.appliedUser) {
           applied = [...e.data().applied];
@@ -339,7 +373,7 @@ class AppealDetails extends Component {
 
   applied(){
     let jobs = firestore().collection('Jobs');
-    jobs.doc('Applied').get().then(a=>{
+    jobs.doc('Applied').get().then((a: any)=>{
       if (a.exists) {
         let applyed = [...a.data().applied];
         for (let x of applyed) {

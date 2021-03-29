@@ -65,9 +65,9 @@ export default class Dashboard extends Component<DashProps, DashState> {
 
             const user = firestore().collection('Users');
 
-            AsyncStorage.getItem('user').then(u => {
+            AsyncStorage.getItem('user').then((u: any) => {
                 if (u){
-                    user.doc(u).onSnapshot(e => {
+                    user.doc(u).onSnapshot((e: any) => {
                         if (e.exists) {
                             let name = `Welcome! ${e.data().firstname} ${e.data().lastname}`;
                             let email = e.data().email;
@@ -92,7 +92,7 @@ export default class Dashboard extends Component<DashProps, DashState> {
                     </Card>
                     <View style={[{backgroundColor: 'white'}, Styles.containerRow]}>
                         {
-                            this.state.Nav.map((arr,ind)=>{
+                            this.state.Nav.map((arr: any,ind: number)=>{
                                 return (
                                     <View key={`dashboard-${ind}`} style={{width: (Dimensions.get('screen').width - 30) / 2, height: 160, padding: 5, margin: 7, marginTop: 0, paddingTop: 0}}>
                                         <TouchableOpacity  style={Styles.nav} onPress={()=> this.props.navigation.navigate(`${arr.route}`)}>

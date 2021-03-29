@@ -67,14 +67,14 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
         };
     }
 
-    imageHandler = (data: any,type: string,index = null,job: any = null) => {
+    imageHandler = (data: any, type: string, index: any = null) => {
         launchImageLibrary('photo', img =>{
             if (data.image.length <= 2 && type === 'add') {
                 data.image.push(img.uri);
-                this.setState({ [job]: data });
+                this.setState({ Post: data });
             } else if (type === 'minus') {
                 data.image.splice(index);
-                this.setState({[job]: data});
+                this.setState({Post: data});
             } else {
                 ToastAndroid.show('User already exist !', ToastAndroid.TOP);
             }
@@ -82,7 +82,7 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
     }
 
     post = () => {
-        for (let x of this.state.Post) {
+        for (let x in this.state.Post) {
             console.log(x);
         }
     }
@@ -123,7 +123,7 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
                             }
                         </View>
 
-                        <TouchableOpacity onPress={()=> this.imageHandler(this.state.Post,'add',0,'post')} style={{ alignSelf: 'flex-end', margin: 10 }}>
+                        <TouchableOpacity onPress={()=> this.imageHandler(this.state.Post,'add',0)} style={{ alignSelf: 'flex-end', margin: 10 }}>
                             <Image source={require('./assets/img/photo.png')} style={{ width: 50, height: 50 }} />
                         </TouchableOpacity>
 

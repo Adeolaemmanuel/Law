@@ -10,8 +10,7 @@ import { Styles } from './functions/styles';
 import firestore from '@react-native-firebase/firestore';
 import { SearchCenterHeaderModule } from './functions/component';
 import { Dimensions } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import * as fn from './functions/component';
 export default class Law extends Component {
     render() {
         return (
@@ -22,8 +21,16 @@ export default class Law extends Component {
     }
 }
 
+interface LawyerProps {
+    navigation: any
+    route: any
+}
 
-export class Lawyers extends Component {
+interface LawyerState {
+    lawyers: any[]
+    search: string
+}
+export class Lawyers extends Component<LawyerProps, LawyerState> {
 
     constructor(props: any) {
         super(props);
@@ -45,8 +52,12 @@ export class Lawyers extends Component {
 
     initializeLaw(){
         if (this.ismounted) {
-            this.getLawyers();
+            fn.getLawyers(this.Admin, this.user, this.setStateHandler);
         }
+    }
+
+    setStateHandler = (lawyers: any) => {
+        this.setState({lawyers});
     }
 
     search = (search: string) => {
@@ -56,7 +67,7 @@ export class Lawyers extends Component {
                 if (search.length > 1) {
                     this.setState({ lawyers: [lawyers] });
                 } else {
-                    this.getLawyers();
+                    fn.getLawyers(this.Admin, this.user, this.setStateHandler);
                 }
             }
         });
@@ -64,41 +75,6 @@ export class Lawyers extends Component {
 
     Admin = firestore().collection('Admin')
     user = firestore().collection('Users')
-    getLawyers() {
-        this.Admin.doc('Users').onSnapshot(email => {
-            let emails: Array<string> = [];
-            if (email.exists) {
-                emails = [...email._data.email];
-                let lawyers = [];
-                AsyncStorage.getItem('user').then(e=>{
-                    for (let x of emails) {
-                        if ( x !== e) {
-                            this.user.doc(x).get().then(lawyer => {
-                                if (lawyer.exists) {
-
-                                    let profilePic = lawyer.data().profilePicture;
-                                    if (lawyer.gender === 'Male' && profilePic === undefined) {
-                                        profilePic = require('./assets/img/profileM.png');
-                                    } else if (lawyer.gender === 'Female' && profilePic === undefined) {
-                                        profilePic = require('./assets/img/profileW.png');
-                                    }
-
-                                    lawyers.push({
-                                        name: `${lawyer.data().firstname} ${lawyer.data().lastname}`,
-                                        key: `${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}`,
-                                        profilePicture: profilePic,
-                                        email: lawyer.data().email,
-                                        location: `${lawyer.data().country}, ${lawyer.data().state}`,
-                                    });
-                                    this.setState({ lawyers });
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-    }
 
     render() {
         return (
@@ -109,10 +85,10 @@ export class Lawyers extends Component {
                 <ScrollView>
                     <View>
                         {
-                            this.state.lawyers.map((item, i) => (
+                            this.state.lawyers.map((item: any) => (
                                 <Pressable key={`Btn-${item.key}`} onPress={() => this.props.navigation.navigate('Profile', { email: item.email })}>
-                                    <Card key={`Card-${item.key}`}>
-                                        <ListItem key={`List-${item.key}`}>
+                                    <Card>
+                                        <ListItem>
                                             <Avatar
                                                 rounded
                                                 source={{
