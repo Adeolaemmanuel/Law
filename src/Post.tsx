@@ -57,7 +57,6 @@ export default class Post extends Component<PostProps, PostState> {
 }
 
 
-
 // fore serurity reasons i advise only lincensce confirmed lawyers are allowed access
 export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
     constructor(props: any) {
@@ -88,7 +87,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                         <View style={Styles.containerPaddingMargin}>
                             <View>
                                 <TextInput
-                                    style={[Styles.input, Styles.cardC]}
+                                    style={[{height: 70 }, Styles.cardC]}
                                     placeholder="Job Title:"
                                     onChangeText={
                                         text => {
@@ -101,7 +100,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                             </View>
                             <View style={Styles.containerRow} >
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
+                                    style={[{ flex: 2, height: 70 }, Styles.cardC]}
                                     placeholder="Company:"
                                     onChangeText={
                                         text => {
@@ -112,7 +111,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                                     }
                                 />
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
+                                    style={[{ flex: 2, height: 70 }, Styles.cardC]}
                                     placeholder="Job Type:"
                                     onChangeText={
                                         text => {
@@ -125,7 +124,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                             </View>
                             <View style={Styles.containerRow} >
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
+                                    style={[{ flex: 2, height: 70  }, Styles.cardC]}
                                     placeholder="Location:"
                                     onChangeText={
                                         text => {
@@ -136,7 +135,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                                     }
                                 />
                                 <TextInput
-                                    style={[{ flex: 2 }, Styles.input, Styles.cardC]}
+                                    style={[{ flex: 2, height: 70 }, Styles.cardC]}
                                     placeholder="Experience:"
                                     onChangeText={
                                         text => {
@@ -149,7 +148,7 @@ export class Vacancy extends Component<PostVacancyProps, PostVacancyState> {
                             </View>
                             <View style={[{ padding: 5 }, Styles.container]}>
                                 <TextInput
-                                    style={[{ justifyContent: 'flex-start', textAlignVertical: 'top' }, Styles.inputCustom, Styles.cardC]}
+                                    style={[{ justifyContent: 'flex-start', textAlignVertical: 'top', height: 80 }, Styles.cardC]}
                                     placeholder="Job details and reqirements:"
                                     multiline={true}
                                     numberOfLines={3}
@@ -203,7 +202,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                         <View style={Styles.containerPaddingMargin}>
                             <View>
                                 <TextInput
-                                    style={[{marginTop: -2}, Styles.input, Styles.cardC]}
+                                    style={[{height: 70}, Styles.cardC]}
                                     placeholder="Title:"
                                     onChangeText={
                                         text => {
@@ -215,7 +214,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                                 />
                             </View>
 
-                            <View style={[Styles.input, Styles.cardC]}>
+                            <View style={[{height: 70 }, Styles.cardC]}>
                                 <Picker
                                     selectedValue={this.state.prelim.type}
                                     mode="dropdown"
@@ -232,7 +231,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
 
                             <View>
                                 <TextInput
-                                    style={[Styles.input, Styles.cardC]}
+                                    style={[{height: 70 }, Styles.cardC]}
                                     placeholder="Location:"
                                     onChangeText={
                                         text => {
@@ -245,7 +244,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                             </View>
                             <View>
                                 <TextInput
-                                    style={[Styles.input, Styles.cardC]}
+                                    style={[{height: 70 }, Styles.cardC]}
                                     placeholder="Date:"
                                     onChangeText={
                                         text => {
@@ -258,10 +257,9 @@ export class Prelim extends Component<PrelProps, PerlState> {
                             </View>
                             <View style={[{ padding: 5 }, Styles.container]}>
                                 <TextInput
-                                    style={[{ textAlignVertical: 'top' }, Styles.inputCustom, Styles.cardC]}
+                                    style={[{ textAlignVertical: 'top', height: 80 }, Styles.cardC]}
                                     placeholder="Summary:"
                                     multiline={true}
-                                    numberOfLines={3}
                                     underlineColorAndroid="transparent"
                                     onChangeText={
                                         text => {
@@ -277,7 +275,7 @@ export class Prelim extends Component<PrelProps, PerlState> {
                             <Button
                                 title="Post"
                                 type="solid"
-                                buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+                                buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
                                 onPress={()=> fn.postJob(this.state.prelim, 'Prelim Posted')}
                             />
                         </View>

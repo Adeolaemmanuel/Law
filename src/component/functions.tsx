@@ -57,6 +57,7 @@ const geoLocation = (setState: any) => {
                         .then(json => {
                             var addressComponent = json.results[0].address_components;
                             setState('addressComponent', addressComponent);
+                            setState('result', result);
                         })
                         .catch(error => console.warn(error));
                 },
@@ -332,6 +333,57 @@ const confirmedRequest = (database: any, user: string, setState: any) => {
     });
 };
 
+const meStatitics = (setState: any, type: string, you: boolean = true, friends: boolean = true) => {
+    AsyncStorage.getItem('user').then((e: any) => {
+
+        firestore().collection('Friends').doc(e).collection('Admin').doc('Data').onSnapshot((s: any) => {
+            if (s.exists && you){
+                let confirmedMe: any = [...s.data().confirmed];
+                let sentMe: any = [...s.data().sent];
+                let recievedMe: any = [...s.data().recieved];
+                switch (type) {
+                    case 'confirmed':
+                        setState('following', confirmedMe.length);
+                        break;
+                    case 'recieved':
+                        setState('recieved', recievedMe.length);
+                        break;
+                    case 'sent':
+                        setState('sent', sentMe.length);
+                        break;
+                    default:
+                        return false;
+                }
+            }
+        });
+
+        firestore().collection('Admin').doc('Users').onSnapshot((s: any) => {
+            if (s.exists && friends) {
+                let emails: any = [...s.data().email];
+                let followers: any = [];
+                for (let x of emails) {
+                    firestore().collection('Friends').doc(x).collection('Admin').doc('Data').onSnapshot((f: any) => {
+                        if (f.exists) {
+                            let sent: any[] = [...f.data().sent];
+                            let confirmed: any[] = [...f.data().confirmed];
+                            if (sent.indexOf(e) !== -1){
+                                followers.push(followers.length + 1);
+                                setState('followers', followers.length);
+                            }
+
+                            if (confirmed.indexOf(e) !== -1){
+                                followers.push(followers.length + 1);
+                                setState('followers', followers.length);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+    });
+};
+
 const getLawyers = (Admin: any, User: any, setState: any) => {
     Admin.doc('Users').onSnapshot((email: any) => {
         let emails: Array<string> = [];
@@ -500,4 +552,5 @@ export {
     applied,
     apply,
     postJob,
+    meStatitics,
 };

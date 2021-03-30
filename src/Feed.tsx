@@ -3,39 +3,33 @@
 
 import * as fn from './component/functions';
 import React, { Component } from 'react';
-import {
-    View,
-    ScrollView,
-    Pressable,
-    Text,
-    Image,
-} from 'react-native';
-import {
-     Card,
-     ListItem,
-     Avatar,
-     Divider,
-     Button,
-    } from 'react-native-elements';
 import {Styles} from './component/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {FeedProps, FeedState, FeedDetProps, FeedDetState, VacancyProps, VacancyState, AppliedProps, AppliedState } from './component/types';
+import {
+  View,
+  ScrollView,
+  Pressable,
+  Text,
+  Image,
+} from 'react-native';
+import {
+  Card,
+  ListItem,
+  Avatar,
+  Divider,
+  Button,
+} from 'react-native-elements';
 
 
-interface FeedProps {
-  route: any,
-  navigation: any
-  details: any
-}
-interface FeedState {
-  Feed: any
-  addressComponent: any
-}
+
 export default class Feeds extends Component<FeedProps, FeedState> {
   constructor(props: any) {
     super(props);
     this.state = {
       Feed: [],
       addressComponent: 'null',
+      result: 'null',
     };
   }
 
@@ -52,7 +46,9 @@ export default class Feeds extends Component<FeedProps, FeedState> {
   initializeFeed(){
     if (this.ismounted) {
       fn.geoLocation(this.setHandlerState);
-      fn.getFeeds(this.setHandlerState);
+      if (this.state.result === 'granted') {
+        fn.getFeeds(this.setHandlerState);
+      }
     }
   }
 
@@ -90,15 +86,6 @@ export default class Feeds extends Component<FeedProps, FeedState> {
 }
 
 
-interface FeedDetProps {
-  route: any,
-  navigation: any
-  details: any
-}
-interface FeedDetState {
-  Details: any
-  user: string
-}
 export class FeedDetails extends Component<FeedDetProps, FeedDetState> {
   constructor(props: any){
       super(props);
@@ -140,18 +127,8 @@ initializeDetails(){
 }
 
 
-interface vacancyProps {
-  route: any,
-  navigation: any
-  details?: any
-}
-interface vacancyState {
-  Details: any
-  user: string
-  disableBtn: boolean
-  btnText: string
-}
-class VacancyDetails extends Component<vacancyProps, vacancyState> {
+
+class VacancyDetails extends Component<VacancyProps, VacancyState> {
   constructor(props: any){
     super(props);
     this.state = {
@@ -249,18 +226,8 @@ class VacancyDetails extends Component<vacancyProps, vacancyState> {
 }
 
 
-interface appliedProps {
-  route: any,
-  navigation: any
-  details: any
-}
-interface appliedState {
-  Details: any
-  user: string
-  disableBtn: boolean
-  btnText: string
-}
-class AppealDetails extends Component<appliedProps, appliedState> {
+
+class AppealDetails extends Component<AppliedProps, AppliedState> {
   constructor(props: any){
     super(props);
     this.state = {

@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
+import { HomeProps, HomeState} from './component/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import Login from './Login';
-import { NavigationAction } from '@react-navigation/native';
-import { block } from 'react-native-reanimated';
+import {
+    View,
+    StyleSheet,
+    Text,
+    Image,
+    TouchableOpacity,
+    Dimensions,
+    BackHandler,
+} from 'react-native';
 
 
-export default class Home extends Component {
-    constructor(props) {
+export default class Home extends Component<HomeProps, HomeState> {
+    constructor(props: any) {
         super(props);
         this.state = {
             slides: [
@@ -89,7 +96,7 @@ export default class Home extends Component {
     }
 
 
-    display = (state) => {
+    display = (state: any) => {
         return (
             <View style={style.containerR}>
 

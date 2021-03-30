@@ -1,108 +1,95 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Agenda} from 'react-native-calendars';
+import CalendarPicker from 'react-native-calendar-picker';
 import { Styles } from './component/styles';
 import { Button } from 'react-native-elements';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import {AgendaState, AgendaProps, AddagendaProps, AddagendaState } from './component/types';
 import {
     View,
-    Dimensions,
     Text,
     TouchableOpacity,
     TextInput,
+    ScrollView,
 } from 'react-native';
 
 
 
-interface CalendarProps {
-    navigation: any
-    view: any
-}
-
-interface CalendarState {
-    add: any
-}
-
-export default class Calender extends Component<CalendarProps, CalendarState> {
+export default class Agenda extends Component<AgendaProps, AgendaState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            add: false,
+            selectedStartDate: null,
         };
-        this.modal = this.modal.bind(this);
+        this.onDateChange = this.onDateChange.bind(this);
     }
 
-    modal = () => {
-        if (this.state.add === false) {
-            this.setState({ add: true });
-        } else if (this.state.add === true) {
-            this.setState({ add: false });
-        }
-    }
 
-    render() {
-        if (this.state.add) {
-            return (
-                <Add view={this.modal} />
-            );
-        } else {
-            return (
-                <Home view={this.modal} />
-            );
-        }
-    }
-}
-
-
-interface HomeProps {
-    view: any
-}
-
-class Home extends Component<HomeProps> {
+    onDateChange(date: any) {
+        this.setState({
+          selectedStartDate: date,
+        });
+      }
 
     render() {
         return (
             <View style={[{backgroundColor: 'white'}, Styles.container]}>
-                <Agenda style={{ height: Dimensions.get('window').height }} />
+                <CalendarPicker
+                    onDateChange={this.onDateChange}
+                />
                 <View style={Styles.modal}>
                     <TouchableOpacity
                         style={Styles.button}
-                        onPress={()=>this.props.view()}
+                        onPress={()=>this.props.navigation.navigate('Add Agenda')}
                     >
-                        <Text style={[{ color: 'white', }, Styles.buttonText]}>Add Event</Text>
+                    <Text style={[{ color: 'white'}, Styles.buttonText]}>Add Event</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-         );
+        );
     }
 }
 
 
-interface AddProps {
-    view: any
-}
+export class AddAgenda extends Component<AddagendaProps, AddagendaState> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            date: new Date(1598051730000),
+            agendas: {},
+        };
+    }
 
-class Add extends Component<AddProps> {
     render() {
         return (
-            <View style={[{backgroundColor: 'white'}, Styles.container]}>
-                <View>
-                    <TouchableOpacity style={Styles.button} onPress={()=>this.props.view()}>
-                        <Text style={[{ color: 'white' }, Styles.buttonText]}>Close</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={Styles.containerPadding}>
-                    <TextInput style={Styles.input} placeholder="Title:" />
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <View style={[{margin: 10}, Styles.container]}>
+                <View style={Styles.container}>
+                    <TextInput style={[{height: 70}, Styles.cardC]} placeholder="Title:" />
                 </View>
                 <View style={[Styles.containerRow]}>
-                    <TextInput style={[{ flex: 2 }, Styles.input]} placeholder="Start:" />
-                    <TextInput style={[{ flex: 2 }, Styles.input]} placeholder="End:" />
+                <RNDateTimePicker mode="time" value={this.state.date} />
+                    <TextInput style={[{ flex: 2, height: 70 }, Styles.cardC]} placeholder="End:" />
                 </View>
-                <View style={Styles.container}>
-                    <TextInput style={[Styles.inputCustom]} placeholder="Event:" multiline={true} numberOfLines={10} />
+                <View style={[{ padding: 5 }, Styles.container]}>
+                    <TextInput
+                        style={[{ justifyContent: 'flex-start', textAlignVertical: 'top', height: 80 }, Styles.cardC]}
+                        placeholder="Summary:"
+                        multiline={true}
+                        numberOfLines={3}
+                        onChangeText={
+                            text => {
+                                let agendas = { ...this.state.agendas };
+                                agendas.summary = text.charAt(0).toUpperCase() + text.slice(1);
+                                this.setState({ agendas });
+                            }
+                        }
+                    />
                 </View>
 
-                <Button title="Create" type="solid" buttonStyle={{ height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30, width: 180, alignSelf: 'center' }} />
+                <Button title="Add Event" type="solid" buttonStyle={{ height: 55, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30, width: 180, alignSelf: 'center' }} />
             </View>
+            </ScrollView>
         );
     }
 }

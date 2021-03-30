@@ -3,6 +3,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import {JobProps, JobState, JobDetProps, JobDetState, JobAppProps, JobAppState} from './component/types';
 import React, { Component } from 'react';
 import {
     View,
@@ -20,14 +21,6 @@ import {
      Button,
     } from 'react-native-elements';
 import {Styles} from './component/styles';
-
-interface JobProps {
-    navigation: any
-}
-
-interface JobState {
-    Jobs: any[]
-}
 
 export default class Jobs extends Component<JobProps, JobState> {
     constructor(props: any){
@@ -110,15 +103,6 @@ export default class Jobs extends Component<JobProps, JobState> {
     }
 }
 
-
-interface JobDetProps {
-    navigation: any
-    route: any
-}
-
-interface JobDetState {
-    Details: any
-}
 
 export class JobDetails extends Component<JobDetProps, JobDetState> {
     constructor(props: any){
@@ -205,15 +189,6 @@ export class JobDetails extends Component<JobDetProps, JobDetState> {
     }
 }
 
-
-interface JobAppProps {
-    navigation: any
-    route: any
-}
-
-interface JobAppState {
-    applied: any[]
-}
 
 export class Applied extends Component<JobAppProps, JobAppState> {
     constructor(props: any) {

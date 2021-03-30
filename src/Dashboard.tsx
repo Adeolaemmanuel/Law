@@ -1,5 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
+import { Styles } from './component/styles';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DashProps, DashState } from './component/types';
 import {
     View,
     Text,
@@ -12,22 +16,11 @@ import {
 import {
     Card,
  } from 'react-native-elements';
-import { Styles } from './component/styles';
-import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-interface DashProps {
-    navigation: any
-    source: any
-    style: any
-}
 
-interface DashState {
-    Nav: any,
-    name: string
-}
+
 export default class Dashboard extends Component<DashProps, DashState> {
     constructor(props: any) {
         super(props);
@@ -36,7 +29,7 @@ export default class Dashboard extends Component<DashProps, DashState> {
             Nav: [
                 {name: 'Jobs', image: require('./assets/img/businessman.png'), route: 'Jobs' },
                 {name: 'Post Jobs', image: require('./assets/img/sticky-notes.png'), route: 'Post' },
-                {name: 'Agenda', image: require('./assets/img/schedule.png'), route: 'Calender' },
+                {name: 'Agenda', image: require('./assets/img/schedule.png'), route: 'Agenda' },
                 {name: 'Lawyer', image: require('./assets/img/lawyer.png'), route: 'Lawyers' },
                 {name: 'Law', image: require('./assets/img/law-book.png'), route: 'Law' },
                 {name: 'Blog', image: require('./assets/img/blog.png'), route: 'Blog' },

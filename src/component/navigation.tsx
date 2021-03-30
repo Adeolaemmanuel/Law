@@ -16,7 +16,7 @@ import Post, { Prelim, Vacancy } from '../Post';
 import Wallet from '../Wallet';
 import Notification from '../Notification';
 import News from '../News';
-import Agenda from '../Agenda';
+import Agenda, { AddAgenda } from '../Agenda';
 import Blog, { BlogPost } from '../Blog';
 import Message from '../Message';
 import Law, { Lawyers } from '../Law';
@@ -295,6 +295,11 @@ class Nav extends Component<NavProps, NavState> {
                 name="Applied" 
                 options={{ headerTitleAlign: 'center', headerTitle: 'Applied' }} 
                 component={Applied} 
+                />
+                <Stack.Screen 
+                name="Add Agenda" 
+                options={{ headerTitleAlign: 'center', headerTitle: 'Add Agenda' }} 
+                component={AddAgenda} 
                 />
             </Stack.Navigator>
         );

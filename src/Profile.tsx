@@ -291,8 +291,9 @@ export class Me extends Component<MeProps, MeState> {
     initializeMe(){
         if (this.ismounted) {
             BackHandler.addEventListener('hardwareBackPress', () => { return true;});
+            fn.meStatitics(this.setHandlerState,'confirmed');
             AsyncStorage.getItem('user').then((res: any) => {
-                fn.recievedRequest(this.friends, res ,this.setHandlerState);
+
                 let user = firestore().collection('Users');
                 // eslint-disable-next-line no-shadow
                 user.doc(res).onSnapshot( (user: any) => {
@@ -346,7 +347,7 @@ export class Me extends Component<MeProps, MeState> {
     user: any = firestore().collection('Users')
     friends: any = firestore().collection('Friends')
 
-    setHandlerState = (state: string, data: string) => {
+    setHandlerState = (state: string, data: string | number) => {
         this.setState({[state]: data});
     }
 
@@ -595,7 +596,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.containerRow}>
                         <TextInput
                             placeholder="Firstname:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.firstname}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -605,7 +606,7 @@ export class Edit extends Component<EditProps, EditState> {
                         />
                         <TextInput
                             placeholder="Lastname:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.lastname}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -617,7 +618,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.containerRow}>
                         <TextInput
                             placeholder="Country:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.country}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -627,7 +628,7 @@ export class Edit extends Component<EditProps, EditState> {
                         />
                         <TextInput
                             placeholder="State:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.state}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -639,7 +640,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.container}>
                         <TextInput
                             placeholder="Phone Number:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{height: 70 }, Styles.cardC]}
                             value={this.state.me.number}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -654,7 +655,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.container}>
                         <TextInput
                             placeholder="University:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.university}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -666,7 +667,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.container}>
                         <TextInput
                             placeholder="Degree:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.degree}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -678,7 +679,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.containerRow}>
                         <TextInput
                             placeholder="Start:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.start}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -688,7 +689,7 @@ export class Edit extends Component<EditProps, EditState> {
                         />
                         <TextInput
                             placeholder="End:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.end}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -700,7 +701,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.container}>
                         <TextInput
                             placeholder="Certificate:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.certificate}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -711,7 +712,7 @@ export class Edit extends Component<EditProps, EditState> {
                     </View>
                     <TextInput
                         placeholder="Lincence No:"
-                        style={[{ flex: 1 }, Styles.input]}
+                        style={[{ flex: 1, height: 70 }, Styles.cardC]}
                         value={this.state.me.licenceNo}
                         onChangeText={text => {
                             let me = { ...this.state.me };
@@ -725,7 +726,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.containerRow}>
                         <TextInput
                             placeholder="Experience:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.experience}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -737,7 +738,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.containerRow}>
                         <TextInput
                             placeholder="Company:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.company}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -749,7 +750,7 @@ export class Edit extends Component<EditProps, EditState> {
                     <View style={Styles.containerRow}>
                         <TextInput
                             placeholder="Start:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.workStart}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
@@ -759,7 +760,7 @@ export class Edit extends Component<EditProps, EditState> {
                         />
                         <TextInput
                             placeholder="End:"
-                            style={[{ flex: 1 }, Styles.input]}
+                            style={[{ flex: 1, height: 70 }, Styles.cardC]}
                             value={this.state.me.workEnd}
                             onChangeText={text => {
                                 let me = { ...this.state.me };
