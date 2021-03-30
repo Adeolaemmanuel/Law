@@ -268,7 +268,6 @@ export class Prelim extends Component<PrelProps, PerlState> {
                                             this.setState({ prelim });
                                         }
                                     }
-
                                 />
                             </View>
 

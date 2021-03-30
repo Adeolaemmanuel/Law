@@ -527,6 +527,68 @@ const applied = (setState: any,user: string) => {
     });
 };
 
+const login = (data: any, callback: any) => {
+    firestore().doc(data.email).get().then( (u: any) => {
+        if (u.exists) {
+            if (data.email === u.data().email && data.password === u.data().password) {
+                AsyncStorage.setItem('user', data.email);
+                callback();
+            } else {
+                ToastAndroid.show('Wrong Email/Password', ToastAndroid.TOP);
+            }
+        }
+    });
+};
+
+const register = (data: any, callback: any) => {
+    data.gender.substr(0, 1).toUpperCase();
+    data.firstname.substr(0, 1).toUpperCase();
+    data.lastname.substr(0, 1).toUpperCase();
+    firestore().doc('Users').get().then((e: any) => {
+        let users = [];
+        if (e.exists) {
+            users = [...e.data().email];
+            if (users.indexOf(data.email) === -1) {
+                users.push(data.email);
+                firestore().doc('Users').update({
+                    email: users,
+                }).then(() => {
+                    firestore().doc(data.email).set(data).then(() => {
+                        AsyncStorage.setItem('user', data.email).then( e => {
+                            if (e) {console.log(e);}
+                            if ( data.type === 'User' ) {
+                                callback('Dash User');
+                            } else {
+                                callback();
+                            }
+                        });
+                    });
+                });
+            } else {
+                ToastAndroid.show('User already exist !', ToastAndroid.TOP);
+            }
+        } else {
+            users.push(data.email);
+            firestore().doc('Users').set({
+                email: users,
+            }).then(() => {
+                firestore().doc(data.email).set(data).then(() => {
+                    firestore().doc(data.email).set(data).then(() => {
+                        AsyncStorage.setItem('user', data.email).then(e => {
+                            if (e) {console.log(e);}
+                            if ( data.type === 'User' ) {
+                                callback('Dash User');
+                            } else {
+                                callback();
+                            }
+                        });
+                    });
+                });
+            });
+        }
+    });
+};
+
 /**
  * Quick Tools:
  * 1.) set State
@@ -553,4 +615,6 @@ export {
     apply,
     postJob,
     meStatitics,
+    login,
+    register,
 };

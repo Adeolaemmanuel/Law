@@ -8,11 +8,6 @@ const Styles = StyleSheet.create({
         flex: 1,
         padding: 10,
     },
-    conSize: {
-        width: '100%',
-        alignSelf: 'center',
-        height: 150,
-    },
     nameText: {
         fontSize: 50,
         fontWeight: 'bold',
@@ -20,7 +15,7 @@ const Styles = StyleSheet.create({
     },
     or: {
         textAlign: 'center',
-        margin: 10,
+        margin: 5,
     },
     cardD: {
         flex: 1,

@@ -1,6 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 
 import React, { Component } from 'react';
+import { Styles } from './component/styles';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Button } from 'react-native-elements';
+import {  } from 'react-native';
+import { Badge } from 'react-native-elements';
+import { ToastAndroid } from 'react-native';
 import {
     Image,
     KeyboardAvoidingView,
@@ -9,13 +15,11 @@ import {
     TouchableOpacity,
     View,
     TouchableHighlight,
+    Dimensions,
 } from 'react-native';
-import { Styles } from './component/styles';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { Button } from 'react-native-elements';
-import {  } from 'react-native';
-import { Badge } from 'react-native-elements';
-import { ToastAndroid } from 'react-native';
+import {
+    Overlay,
+} from 'react-native-elements';
 
 
 
@@ -56,6 +60,7 @@ interface PropsBlogPost {
 interface StateBlogPost {
     PicStyle: any
     Post: {title: string, post: string, image: number[]}
+    overlay: boolean
 }
 
 export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
@@ -64,19 +69,20 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
         this.state = {
             PicStyle: [],
             Post: { title: '', post: '', image: []},
+            overlay: false,
         };
     }
 
     imageHandler = (data: any, type: string, index: any = null) => {
         launchImageLibrary('photo', img =>{
-            if (data.image.length <= 2 && type === 'add') {
+            if (data.image.length <= 3 && type === 'add') {
                 data.image.push(img.uri);
                 this.setState({ Post: data });
             } else if (type === 'minus') {
                 data.image.splice(index);
                 this.setState({Post: data});
             } else {
-                ToastAndroid.show('User already exist !', ToastAndroid.TOP);
+                ToastAndroid.show('Can\'t select more than four !', ToastAndroid.TOP);
             }
         });
     }
@@ -94,13 +100,13 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
                     <View style={{marginTop: 20}} >
                         <View style={[{ padding: 5 }, Styles.container]}>
                             <TextInput
-                                style={[{height: 70}, Styles.input, Styles.cardC]}
+                                style={[{height: 60}, Styles.cardC]}
                                 placeholder="Title:"
                             />
                         </View>
                         <View style={[{ padding: 5 }, Styles.container]}>
                             <TextInput
-                                style={[{justifyContent: 'flex-start', textAlignVertical: 'top' }, Styles.inputCustom, Styles.cardC]}
+                                style={[{justifyContent: 'flex-start', textAlignVertical: 'top', height: 80 }, Styles.cardC]}
                                 placeholder="What's on your mind..."
                                 multiline={true}
                                 numberOfLines={3}
@@ -108,29 +114,38 @@ export class BlogPost extends Component<PropsBlogPost, StateBlogPost> {
                             />
                         </View>
 
-                        <View style={Styles.containerRow}>
-                            {
-                                this.state.Post.image.map((arr,ind)=>{
-                                    return (
-                                        <View style={[Styles.container]}>
-                                            <Badge value="X" status="error" key={`blogB-${ind}`} containerStyle={{margin: 10, padding: 10}}  />
-                                            <TouchableHighlight key={`blog-${ind}`}>
-                                                <Image source={{uri: arr}} key={`blogI-${ind}`} style={{width: 130, height: 130}} />
-                                            </TouchableHighlight>
-                                        </View>
-                                    );
-                                })
-                            }
-                        </View>
+                        <Overlay
+                            isVisible={this.state.overlay}
+                            overlayStyle={{width: 350, height: 500}}
+                            onBackdropPress={()=> this.setState({overlay: false})}
+                        >
+                            <View style={Styles.containerRow}>
+                                {
+                                    this.state.Post.image.map((arr,ind)=>{
+                                        return (
+                                            <View style={{width: (Dimensions.get('screen').width - 30) / 3, height: 160, padding: 5, margin: 7, marginTop: 0, paddingTop: 0}}>
+                                                <Badge value="X" status="error" key={`blogB-${ind}`} containerStyle={{marginTop: 10, marginBottom: 10, alignSelf: 'center'}}  />
+                                                <TouchableHighlight>
+                                                    <Image source={{uri: arr}} style={{width: 130, height: 130, marginLeft: 10, padding: 15}} />
+                                                </TouchableHighlight>
+                                            </View>
+                                        );
+                                    })
+                                }
+                            </View>
+                            <TouchableOpacity onPress={()=> this.imageHandler(this.state.Post,'add')} style={{  margin: 10 }}>
+                                <Image source={require('./assets/img/photo.png')} style={{ width: 50, height: 50 }} />
+                            </TouchableOpacity>
+                        </Overlay>
 
-                        <TouchableOpacity onPress={()=> this.imageHandler(this.state.Post,'add',0)} style={{ alignSelf: 'flex-end', margin: 10 }}>
+                        <TouchableOpacity onPress={()=> this.setState({overlay: true})} style={{ alignSelf: 'flex-end', margin: 10 }}>
                             <Image source={require('./assets/img/photo.png')} style={{ width: 50, height: 50 }} />
                         </TouchableOpacity>
 
                         <Button
                             title="Post"
                             type="solid"
-                            buttonStyle={{ height: 70, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
+                            buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
                             onPress={this.post}
                         />
                     </View>

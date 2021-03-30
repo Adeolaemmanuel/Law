@@ -20,8 +20,9 @@ import Agenda, { AddAgenda } from '../Agenda';
 import Blog, { BlogPost } from '../Blog';
 import Message from '../Message';
 import Law, { Lawyers } from '../Law';
-import Jobs, {Applied, JobDetails} from '../Jobs';
+import Jobs, {Applied } from '../Jobs';
 import Settings from '../Settings';
+import { Signup } from '../Users';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,7 +80,8 @@ const Setup_N = () => {
     return (
         <Setup.Navigator>
             <Setup.Screen name="Home" options={{ headerShown: false }} component={Home} />
-            <Setup.Screen name="Register" options={{ headerShown: false }} component={Register} />
+            <Setup.Screen name="Register" options={{ headerTitle: 'Register', headerTitleAlign: 'center' }} component={Register} />
+            <Setup.Screen name="Signup" options={{ headerTitle: 'Register', headerTitleAlign: 'center' }} component={Signup} />
         </Setup.Navigator>
     );
 };
@@ -260,11 +262,6 @@ class Nav extends Component<NavProps, NavState> {
                 name="Profile" 
                 options={{ headerTitleAlign: 'center' }} 
                 component={Profile} 
-                />
-                <Stack.Screen 
-                name="Job Details" 
-                options={{ headerTitleAlign: 'center', headerTitle: 'Details' }} 
-                component={JobDetails} 
                 />
                 <Stack.Screen 
                 name="Feed Details" 

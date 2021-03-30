@@ -36,9 +36,12 @@ export interface PerlState {
 
 export interface JobProps {
     navigation: any
+    Details: any
 }
 export interface JobState {
     Jobs: any[]
+    overlay: boolean
+    index: number
 }
 
 

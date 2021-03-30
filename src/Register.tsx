@@ -1,13 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-shadow */
 import React, { Component } from 'react';
+import * as fn from './component/functions';
 import {
     View,
-    Text,
     TextInput,
     KeyboardAvoidingView,
     ScrollView,
-    ToastAndroid,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Badge } from 'react-native-elements';
@@ -16,7 +15,6 @@ import Geolocation from 'react-native-geolocation-service';
 import { request, PERMISSIONS } from 'react-native-permissions';
 import { Button } from 'react-native-elements';
 import { Styles } from './component/styles';
-import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -116,49 +114,11 @@ export default class Register extends Component<RegisterProps, RegisterState> {
         }
     }
 
-  Admin = firestore().collection('Admin')
-  Users = firestore().collection('Users')
-
-    Register = (data: any) => {
-        data.gender.substr(0, 1).toUpperCase();
-        data.firstname.substr(0, 1).toUpperCase();
-        data.lastname.substr(0, 1).toUpperCase();
-        this.Admin.doc('Users').get().then((e: any) => {
-            let users = [];
-            if (e.exists) {
-                users = [...e.data().email];
-                if (users.indexOf(data.email) === -1) {
-                    users.push(data.email);
-                    this.Admin.doc('Users').update({
-                        email: users,
-                    }).then(() => {
-                        this.Users.doc(data.email).set(data).then(() => {
-                            AsyncStorage.setItem('user', data.email).then( e => {
-                                if (e) {console.log(e);}
-                                this.props.navigation.navigate('Drawer');
-                            });
-                        });
-                    });
-                } else {
-                    ToastAndroid.show('User already exist !', ToastAndroid.TOP);
-                }
-            } else {
-                users.push(data.email);
-                this.Admin.doc('Users').set({
-                    email: users,
-                }).then(() => {
-                    this.Users.doc(data.email).set(data).then(() => {
-                        this.Users.doc(data.email).set(data).then(() => {
-                            AsyncStorage.setItem('user', data.email).then(e => {
-                                if (e) {console.log(e);}
-                                this.props.navigation.push('Drawer');
-                            });
-                        });
-                    });
-                });
-            }
-        });
+    callback = (route: string = 'Drawer') => {
+        this.props.navigation.navigate(route);
     }
+
+
 
     badge = () => {
         if (this.state.step1) {
@@ -184,7 +144,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
         if (this.state.step1) {
             return (
                 <>
-                    <View style={Styles.container}>
+                    <View style={[{justifyContent: 'center', alignContent: 'center'}, Styles.containerPaddingMargin]}>
                         <View>
                             <TextInput
                                 placeholder="First Name:"
@@ -194,7 +154,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                                 data.firstname = text.charAt(0).toUpperCase() + text.slice(1);
                                 this.setState({ step1D: data });
                                 }}
-                                style={Styles.input}
+                                style={[{height: 60 }, Styles.cardC]}
                             />
                         </View>
                         <View>
@@ -206,13 +166,13 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                                 data.lastname = text.charAt(0).toUpperCase() + text.slice(1);
                                 this.setState({ step1D: data });
                                 }}
-                                style={Styles.input}
+                                style={[{height: 60 }, Styles.cardC]}
                             />
                         </View>
                         <View>
                             <TextInput
                                 placeholder="Email:"
-                                style={Styles.input}
+                                style={[{height: 60 }, Styles.cardC]}
                                 value={this.state.step1D.email}
                                 onChangeText={text => {
                                 let data = { ...this.state.step1D };
@@ -225,7 +185,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <View>
                             <TextInput
                                 placeholder="Phone Number:"
-                                style={Styles.input}
+                                style={[{height: 60 }, Styles.cardC]}
                                 value={this.state.step1D.password}
                                 onChangeText={text => {
                                 let data = { ...this.state.step1D };
@@ -237,7 +197,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <View>
                             <TextInput
                                 placeholder="Password:"
-                                style={Styles.input}
+                                style={[{height: 60 }, Styles.cardC]}
                                 value={this.state.step1D.repassword}
                                 secureTextEntry={true}
                                 onChangeText={text => {
@@ -250,7 +210,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <Button
                             title="Next"
                             type="solid"
-                            buttonStyle={{ height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30, width: 180, alignSelf: 'center' }}
+                            buttonStyle={{ height: 50, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30, width: 180, alignSelf: 'center' }}
                             onPress={() => this.formData(this.state.step1D, 'step1', 'step2', 'next')}
                         />
                     </View>
@@ -263,7 +223,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="DOB:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             value={this.state.step2D.dob}
                             onChangeText={text => {
                             let data = { ...this.state.step2D };
@@ -271,7 +231,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                             this.setState({ step2D: data });
                         }} />
                     </View>
-                    <View style={Styles.input}>
+                    <View style={[{height: 60 }, Styles.cardC]}>
                         <Picker
                             selectedValue={this.state.step2D.gender}
                             mode="dropdown"
@@ -289,7 +249,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="Address:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             value={this.state.step2D.address}
                             onChangeText={text => {
                             let data = { ...this.state.step2D };
@@ -302,7 +262,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <TextInput
                             placeholder="Country:"
                             value={this.state.step2D.country}
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step2D };
                             data.country = text.charAt(0).toUpperCase() + text.slice(1);
@@ -314,7 +274,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <TextInput
                             placeholder="State:"
                             value={this.state.step2D.state}
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step2D };
                             data.state = text.charAt(0).toUpperCase() + text.slice(1);
@@ -326,13 +286,13 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <Button
                             title="Previous"
                             type="solid"
-                            buttonStyle={{ width: 100, height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
+                            buttonStyle={{ width: 100, height: 50, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
                             onPress={() => this.formData(this.state.step2D, 'step2', 'step1', 'prev')}
                         />
                         <Button
                             title="Next"
                             type="solid"
-                            buttonStyle={{ width: 100, height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
+                            buttonStyle={{ width: 100, height: 50, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
                             onPress={() => this.formData(this.state.step2D, 'step2', 'step3', 'next')}
                         />
                     </View>
@@ -345,7 +305,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="Education:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step3D };
                             data.education = text.charAt(0).toUpperCase() + text.slice(1);
@@ -356,7 +316,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="Degree:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step3D };
                             data.degree = text.charAt(0).toUpperCase() + text.slice(1);
@@ -367,7 +327,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="Start Year:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step3D };
                             data.start = text.charAt(0).toUpperCase() + text.slice(1);
@@ -378,7 +338,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="End Year:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step3D };
                             data.end = text.charAt(0).toUpperCase() + text.slice(1);
@@ -389,7 +349,7 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                     <View>
                         <TextInput
                             placeholder="Certificate:"
-                            style={Styles.input}
+                            style={[{height: 60 }, Styles.cardC]}
                             onChangeText={text => {
                             let data = { ...this.state.step3D };
                             data.certificate = text.charAt(0).toUpperCase() + text.slice(1);
@@ -401,14 +361,14 @@ export default class Register extends Component<RegisterProps, RegisterState> {
                         <Button
                             title="Previous"
                             type="solid"
-                            buttonStyle={{ width: 100, height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
+                            buttonStyle={{ width: 100, height: 50, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
                             onPress={() => this.formData(this.state.step3D, 'step2', 'step3', 'prev')}
                         />
                         <Button
                             title="Login"
                             type="solid"
-                            onPress={() => this.Register({ ...this.state.step1D, ...this.state.step2D, ...this.state.step3D })}
-                            buttonStyle={{ width: 100, height: 70, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
+                            onPress={() => fn.register({ ...this.state.step1D, ...this.state.step2D, ...this.state.step3D, type: 'Lawyer' }, this.callback)}
+                            buttonStyle={{ width: 100, height: 50, margin: 10, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 30 }}
                         />
                     </View>
                 </View>
@@ -419,13 +379,14 @@ export default class Register extends Component<RegisterProps, RegisterState> {
 
   render() {
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: 'white'}}>
         <View>
           <KeyboardAvoidingView>
-            <Text style={Styles.headerText}>Register</Text>
-            {
-                this.badge()
-            }
+            <View style={{marginTop: 10, marginBottom: 10}}>
+                {
+                    this.badge()
+                }
+            </View>
             {
               this.StepComponent()
             }

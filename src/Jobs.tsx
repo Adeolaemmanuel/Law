@@ -19,6 +19,7 @@ import {
      Avatar,
      Divider,
      Button,
+     Overlay,
     } from 'react-native-elements';
 import {Styles} from './component/styles';
 
@@ -27,12 +28,14 @@ export default class Jobs extends Component<JobProps, JobState> {
         super(props);
         this.state = {
             Jobs: [],
+            overlay: false,
+            index: 0,
         };
     }
 
     ismounted: boolean = false;
     componentDidMount(){
-        BackHandler.addEventListener('hardwareBackPress', ()=> {return true});
+        BackHandler.addEventListener('hardwareBackPress', ()=> {return true;});
         this.ismounted = true;
         this.initializeJobs();
     }
@@ -63,6 +66,10 @@ export default class Jobs extends Component<JobProps, JobState> {
         this.ismounted = false;
     }
 
+    setStateHandle = (overlay: any) => {
+        this.setState({overlay});
+    }
+
     render() {
         if (this.state.Jobs.length === 0) {
             return (
@@ -74,26 +81,33 @@ export default class Jobs extends Component<JobProps, JobState> {
                 </View>
             );
         } else {
+            let overlay = true;
             return (
                 <ScrollView style={{backgroundColor: 'white'}}>
+
                     <View>
+                    <Overlay isVisible={this.state.overlay} overlayStyle={{width: 350, height: 600}} onBackdropPress={()=> this.setState({overlay: false})}>
+                        <JobDetails navigation={this.props.navigation} Details={this.state.Jobs[this.state.index]} overlay={this.setStateHandle} />
+                    </Overlay>
                         {
-                            this.state.Jobs.map((item, i) => (
-                                <Pressable key={`BtnJobsDetails-${item.key}${i}`} onPress={() => this.props.navigation.navigate('Job Details', { Details: item })}>
-                                    <Card>
-                                        <ListItem>
-                                            <Avatar
-                                                rounded
-                                                source={{ uri: item.profilePicture}}
-                                            />
-                                            <ListItem.Content>
-                                                <ListItem.Title>{item.title}</ListItem.Title>
-                                                <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
-                                            </ListItem.Content>
-                                            <ListItem.Chevron />
-                                        </ListItem>
-                                    </Card>
-                                </Pressable>
+                            this.state.Jobs.map((item, index) => (
+                                <View key={`overlayDetails-${item.key}${index}`}>
+
+                                    <Pressable onPress={() => this.setState({index, overlay})}>
+                                        <Card>
+                                            <ListItem>
+                                                <Avatar
+                                                    rounded
+                                                    source={{ uri: item.profilePicture}}
+                                                />
+                                                <ListItem.Content>
+                                                    <ListItem.Title>{item.title}</ListItem.Title>
+                                                    <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+                                                </ListItem.Content>
+                                            </ListItem>
+                                        </Card>
+                                    </Pressable>
+                                </View>
                             ))
                         }
                     </View>
@@ -123,7 +137,7 @@ export class JobDetails extends Component<JobDetProps, JobDetState> {
     }
 
     initializeDetails(){
-        const { Details } = this.props.route.params;
+        const Details = this.props.Details;
         if (this.ismounted) {
             this.setState({Details});
         }
@@ -181,7 +195,11 @@ export class JobDetails extends Component<JobDetProps, JobDetState> {
                         title="View Applied Users"
                         type="solid"
                         buttonStyle={{ height: 50, margin: 5, fontSize: 20, fontWeight: 'bold', backgroundColor: '#161b22', marginTop: 20, width: 180, alignSelf: 'center' }}
-                        onPress={()=> this.props.navigation.navigate('Applied', {id: this.state.Details.id})}
+                        onPress={()=> {
+                            this.props.overlay(false);
+                            this.props.navigation.push('Applied', {id: this.state.Details.id});
+                        }
+                        }
                     />
                 </View>
             </ScrollView>
