@@ -538,7 +538,7 @@ const login = (data: any, navigate: any) => {
                 } else if (u.data().type === 'Lawyer') {
                     AsyncStorage.setItem('user', data.email);
                     AsyncStorage.setItem('type', u.data().type);
-                    navigate('Register');
+                    navigate('Drawer');
                 }
             } else {
                 ToastAndroid.showWithGravityAndOffset('Wrong Email/Password', 2000, ToastAndroid.TOP,10,10);
@@ -575,6 +575,87 @@ const register = (datas: any, navigate: any, route: string) => {
     });
 };
 
+
+const messageHandler = (user: string, navigate: any) => {
+    AsyncStorage.getItem('user').then((me: any)=>{
+        let key = `${me}||${user}`;
+        firestore().collection('Admin').doc('Messages').get()
+        .then((k: any)=> {
+            if (k.exists) {
+                let keys = [...k.data().keys];
+                keys.forEach((val: any,ind: number,arr: any[])=>{
+                    if (val.key === `${me}||${user}` || val.key === `${user}||${me}`) {
+                        navigate('Chat',{pram: val.key});
+                    } else {
+                        //keys.unshift({key: key, user1: user, user2: me});
+                        firestore().collection('Admin').doc('Messages').update({keys: keys}).catch(e=> console.log(e+'jjjjj'));
+                        firestore().collection('Messages').doc(me).update({keys: keys});
+                        firestore().collection('Messages').doc(user).update({keys: keys});
+                        navigate('Chat',{pram: val.key});
+                    }
+                });
+            } else {
+                firestore().collection('Admin').doc('Messages').set({keys: [{key: key, user1: user, user2: me}]});
+                firestore().collection('Messages').doc(me).set({keys: [{user: user, key: key}]});
+                firestore().collection('Messages').doc(user).set({keys: [{user: me, key: key}]});
+                navigate('Chat',{pram: key});
+            }
+        });
+    });
+};
+
+const chat = (chats: any, key: string) => {
+    firestore().collection('Messages').doc('Chat').collection(key).doc('Messages').get()
+    .then((me: any) => {
+        if (me.exists) {
+            let messages = [...me.data().message];
+            messages.unshift(chats[0]);
+            console.log('====================================');
+            console.log(messages);
+            console.log('====================================');
+            firestore().collection('Messages').doc('Chat').collection(key).doc('Messages')
+            .update({message: messages});
+        } else {
+            firestore().collection('Messages').doc('Chat').collection(key).doc('Messages')
+            .set({message: [chats]});
+        }
+    });
+};
+
+const getChat = (key: string, callback: any) => {
+    firestore().collection('Messages').doc('Chat').collection(key).doc('Messages')
+    .onSnapshot((chats: any) => {
+        if (chats.exists) {
+            let messages = [...chats.data().message];
+            console.log('====================================> clalback');
+            console.log(messages);
+            console.log('====================================');
+            callback(messages);
+        }
+    });
+};
+
+const getMessages = (callback: any) => {
+    AsyncStorage.getItem('user').then((me: any) => {
+        firestore().collection('Messages').doc(me).onSnapshot((c: any) => {
+            let contact = [...c.data().keys];
+            contact.forEach((val: any) => {
+                firestore().collection('Users').doc(val.user).get()
+                .then((k: any) => {
+                    val.name = `${k.data().firstname} ${k.data().lastname}`;
+                    callback(contact);
+                });
+            });
+        });
+    });
+};
+
+
+
+
+
+
+
 /**
  * Quick Tools:
  * 1.) set State
@@ -603,6 +684,10 @@ export {
     meStatitics,
     login,
     register,
+    messageHandler,
+    chat,
+    getChat,
+    getMessages,
 };
     //Debug: SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
     //DebugTest: SHA1: 5E: 8F: 16: 06: 2E: A3: CD: 2C: 4A: 0D: 54: 78: 76: BA: A6: F3: 8C: AB: F6: 25;

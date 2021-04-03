@@ -62,7 +62,7 @@ export default class Profile extends Component<ProfileProps, ProifleState> {
             let user = firestore().collection('Users');
             fn.sentRequest(this.friends,email, this.setHandlerState);
             fn.confirmedRequest(this.friends,email, this.setHandlerState);
-            user.doc(email).onSnapshot( users => {
+            user.doc(email).onSnapshot( (users: any) => {
                 if (users.exists) {
                     let me = { ...this.state.me };
                     me.firstname = users.data().firstname;
@@ -85,10 +85,10 @@ export default class Profile extends Component<ProfileProps, ProifleState> {
 
                     let profilePic = users.data().profilePicture;
                     if (me.gender === 'Male' && profilePic === undefined) {
-                        profilePic = require('./assets/img/profileM.png')
+                        profilePic = require('./assets/img/profileM.png');
                         this.setState({ profilePic });
                     } else if (me.gender === 'Female' && profilePic === undefined) {
-                        profilePic = require('./assets/img/profileW.png')
+                        profilePic = require('./assets/img/profileW.png');
                         this.setState({ profilePic });
                     } else {
                         this.setState({ profilePic });
@@ -149,7 +149,7 @@ export default class Profile extends Component<ProfileProps, ProifleState> {
                         }
                         <TouchableOpacity
                             style={[{ width: '90%', height: 60, backgroundColor: 'black', margin: 10, borderRadius: 5 }]}
-                            onPress={()=> this.props.navigation.navigate('Message')}
+                            onPress={()=> fn.messageHandler(this.state.me.email, this.props.navigation.navigate)}
                         >
                             <Text style={{ color: 'white', alignSelf: 'center', fontSize: 25, padding: 10 }}>Message</Text>
                         </TouchableOpacity>

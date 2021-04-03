@@ -18,7 +18,7 @@ import Notification from '../Notification';
 import News from '../News';
 import Agenda, { AddAgenda } from '../Agenda';
 import Blog, { BlogPost } from '../Blog';
-import Message from '../Message';
+import Message, { Chat } from '../Message';
 import Law, { Lawyers } from '../Law';
 import Jobs, {Applied } from '../Jobs';
 import Settings from '../Settings';
@@ -322,6 +322,11 @@ class Nav extends Component<NavProps, NavState> {
                 name="User Profile Edit" 
                 options={{ headerTitleAlign: 'center', headerTitle: 'Edit' }} 
                 component={UserEdit} 
+                />
+                <Stack.Screen 
+                name="Chat" 
+                options={{ headerTitleAlign: 'center', headerTitle: 'Chat' }} 
+                component={Chat} 
                 />
             </Stack.Navigator>
         );
