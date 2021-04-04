@@ -1,6 +1,6 @@
 import React from 'react';
 import { Component } from 'react';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
 import * as fn from './component/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,10 +33,8 @@ export default class Message extends Component {
 
     setHandler = (contact: any) => {
         this.setState({contact});
-        console.log('====================================');
-        console.log(this.state.contact);
-        console.log('====================================');
     }
+
 
     render() {
         return (
@@ -44,7 +42,7 @@ export default class Message extends Component {
                 {
                     this.state.contact.map((arr: any) => {
                         return (
-                            <Pressable key={arr.user} style={{marginTop: 10}} onPress={()=> this.props.navigation.navigate('Chat', {pram: arr.key})} >
+                            <Pressable key={arr.user} style={{marginTop: 10}} disabled={arr.disabled} onPress={()=> this.props.navigation.navigate('Chat', {pram: arr.key})} >
                                 <Card>
                                     <View style={Styles.container}>
                                         <View>
@@ -99,6 +97,25 @@ export class Chat extends Component {
         this.setState({messages});
     }
 
+    renderBubble(props: any) {
+        return (
+          <Bubble
+            {...props}
+            wrapperStyle={{
+              left: {
+                backgroundColor: 'white',
+                padding: 5,
+                margin: 5,
+                },
+              right: {
+                  padding: 5,
+                  margin: 5,
+              },
+            }}
+          />
+        );
+    }
+
 
     onSend(messages = []) {
         this.setState((previousState) => {
@@ -120,6 +137,7 @@ export class Chat extends Component {
                 _id: this.state.name,
                 avatar: this.state.img,
               }}
+              renderBubble={this.renderBubble}
             />
           );
     }

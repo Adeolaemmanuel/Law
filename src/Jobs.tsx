@@ -13,6 +13,7 @@ import {
     Text,
     Image,
     BackHandler,
+    Dimensions,
 } from 'react-native';
 import {
      Card,
@@ -87,7 +88,7 @@ export default class Jobs extends Component<JobProps, JobState> {
                 <ScrollView style={{backgroundColor: 'white'}}>
 
                     <View>
-                    <Overlay isVisible={this.state.overlay} overlayStyle={{width: 350, height: 600}} onBackdropPress={()=> this.setState({overlay: false})}>
+                    <Overlay isVisible={this.state.overlay} overlayStyle={{width: Dimensions.get('screen').width - 50, height: Dimensions.get('screen').height - 200 }} onBackdropPress={()=> this.setState({overlay: false})}>
                         <JobDetails navigation={this.props.navigation} Details={this.state.Jobs[this.state.index]} overlay={this.setStateHandle} />
                     </Overlay>
                         {

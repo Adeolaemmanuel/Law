@@ -9,7 +9,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Home from '../Home';
 import Register from '../Register';
-import Feeds, {FeedDetails} from '../Feed';
+import Feeds from '../Feed';
 import Profile, { Me, Edit } from '../Profile';
 import Dash from '../Dashboard';
 import Post, { Prelim, Vacancy } from '../Post';
@@ -262,11 +262,6 @@ class Nav extends Component<NavProps, NavState> {
                 name="Profile" 
                 options={{ headerTitleAlign: 'center' }} 
                 component={Profile} 
-                />
-                <Stack.Screen 
-                name="Feed Details" 
-                options={{ headerTitleAlign: 'center', headerTitle: 'Details' }} 
-                component={FeedDetails} 
                 />
                 <Stack.Screen 
                 name="Vacancy" 

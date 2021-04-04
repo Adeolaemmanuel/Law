@@ -83,46 +83,14 @@ export interface FeedProps {
     details: any
 }
 export interface FeedState {
-    Feed: any
+    Feed: any[]
     addressComponent: any
     result: string
-}
-
-
-export interface FeedDetProps {
-    route: any,
-    navigation: any
-    details: any
-}
-export interface FeedDetState {
-    Details: any
-    user: string
-}
-
-
-export interface VacancyProps {
-    route: any,
-    navigation: any
-    details?: any
-}
-export interface VacancyState {
-    Details: any
-    user: string
+    me: string
+    overlay: boolean
     disableBtn: boolean
     btnText: string
-}
-
-
-export interface AppliedProps {
-    route: any,
-    navigation: any
-    details: any
-}
-export interface AppliedState {
     Details: any
-    user: string
-    disableBtn: boolean
-    btnText: string
 }
 
 

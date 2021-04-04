@@ -395,22 +395,25 @@ const getLawyers = (Admin: any, User: any, setState: any) => {
                     if ( x !== e) {
                         User.doc(x).get().then((lawyer: any) => {
                             if (lawyer.exists) {
+                                if (lawyer.data().type === 'Lawyer') {
 
-                                let profilePic = lawyer.data().profilePicture;
-                                if (lawyer.gender === 'Male' && profilePic === undefined) {
-                                    profilePic = require('../assets/img/profileM.png');
-                                } else if (lawyer.gender === 'Female' && profilePic === undefined) {
-                                    profilePic = require('../assets/img/profileW.png');
+                                    let profilePic = lawyer.data().profilePicture;
+                                    if (lawyer.gender === 'Male' && profilePic === undefined) {
+                                        profilePic = require('../assets/img/profileM.png');
+                                    } else if (lawyer.gender === 'Female' && profilePic === undefined) {
+                                        profilePic = require('../assets/img/profileW.png');
+                                    }
+
+                                    lawyers.push({
+                                        name: `${lawyer.data().firstname} ${lawyer.data().lastname}`,
+                                        key: `${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}`,
+                                        profilePicture: profilePic,
+                                        email: lawyer.data().email,
+                                        location: `${lawyer.data().country}, ${lawyer.data().state}`,
+                                    });
+                                    setState(lawyers);
+
                                 }
-
-                                lawyers.push({
-                                    name: `${lawyer.data().firstname} ${lawyer.data().lastname}`,
-                                    key: `${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}${Math.ceil(Math.random() * 19)}`,
-                                    profilePicture: profilePic,
-                                    email: lawyer.data().email,
-                                    location: `${lawyer.data().country}, ${lawyer.data().state}`,
-                                });
-                                setState(lawyers);
                             }
                         });
                     }
@@ -460,23 +463,22 @@ const getFeeds = (setState: any) => {
 };
 
 const apply = (setState: any, job: any) => {
-    let apply: any = firestore().collection('Jobs');
     let jobs: any = {...job};
     let applied;
-    apply.doc('Applied').get().then((e: any)=>{
+    firestore().collection('Jobs').doc('Applied').get().then((e: any)=>{
       if (e.exists) {
         if (jobs.jobOwner !== jobs.appliedUser) {
           console.log('yes');
           applied = [...e.data().applied];
           applied.push(jobs);
-          apply.doc('Applied').update({applied: applied}).then((res: any)=>{
+          firestore().collection('Jobs').doc('Applied').update({applied: applied}).then((res: any)=>{
             console.log(res);
             setState('btnText', 'APPLIED');
             setState('disableBtn', true);
           });
         }
       } else {
-        apply.doc('Applied').set({applied: [jobs]}).then((res: any)=>{
+        firestore().collection('Jobs').doc('Applied').set({applied: [jobs]}).then((res: any)=>{
           console.log(res);
             setState('btnText', 'APPLIED');
             setState('disableBtn', true);
@@ -583,17 +585,38 @@ const messageHandler = (user: string, navigate: any) => {
         .then((k: any)=> {
             if (k.exists) {
                 let keys = [...k.data().keys];
-                keys.forEach((val: any,ind: number,arr: any[])=>{
-                    if (val.key === `${me}||${user}` || val.key === `${user}||${me}`) {
-                        navigate('Chat',{pram: val.key});
-                    } else {
-                        //keys.unshift({key: key, user1: user, user2: me});
-                        firestore().collection('Admin').doc('Messages').update({keys: keys}).catch(e=> console.log(e+'jjjjj'));
-                        firestore().collection('Messages').doc(me).update({keys: keys});
-                        firestore().collection('Messages').doc(user).update({keys: keys});
-                        navigate('Chat',{pram: val.key});
-                    }
-                });
+                if (keys.length !== 0) {
+                    keys.forEach((val: any,ind: number,arr: any[])=>{
+                        if (val.key === `${me}||${user}` || val.key === `${user}||${me}`) {
+                            navigate('Chat',{pram: val.key});
+                        } else {
+                            keys.unshift({key: key, user1: user, user2: me});
+                            firestore().collection('Admin').doc('Messages').update({keys: keys});
+                            firestore().collection('Messages').doc(me).get()
+                            .then((u: any) =>{
+                                if (u.exists) {
+                                    let keyU = [...u.data().keys];
+                                    keyU.unshift({key: key, user: user});
+                                    firestore().collection('Messages').doc(me).update({keys: keyU});
+                                } else {
+                                    firestore().collection('Messages').doc(me).set({keys: [{key: key, user: user}]});
+                                }
+                            });
+                            firestore().collection('Messages').doc(user).get()
+                            .then((u: any) =>{
+                                if (u.exists) {
+                                    let keyU = [...u.data().keys];
+                                    keyU.unshift({key: key, user: me});
+                                    firestore().collection('Messages').doc(me).update({keys: keyU});
+                                    firestore().collection('Messages').doc(user).update({keys: keys});
+                                } else {
+                                    firestore().collection('Messages').doc(user).set({keys: [{key: key, user: user}]});
+                                }
+                            });
+                            navigate('Chat',{pram: val.key});
+                        }
+                    });
+                }
             } else {
                 firestore().collection('Admin').doc('Messages').set({keys: [{key: key, user1: user, user2: me}]});
                 firestore().collection('Messages').doc(me).set({keys: [{user: user, key: key}]});
@@ -605,25 +628,25 @@ const messageHandler = (user: string, navigate: any) => {
 };
 
 const chat = (chats: any, key: string) => {
-    firestore().collection('Messages').doc('Chat').collection(key).doc('Messages').get()
+    firestore().collection('Messages').doc('Admin').collection('Chat').doc(key).get()
     .then((me: any) => {
         if (me.exists) {
             let messages = [...me.data().message];
             messages.unshift(chats[0]);
-            console.log('====================================');
-            console.log(messages);
-            console.log('====================================');
-            firestore().collection('Messages').doc('Chat').collection(key).doc('Messages')
+            firestore().collection('Messages').doc('Admin').collection('Chat').doc(key)
             .update({message: messages});
         } else {
-            firestore().collection('Messages').doc('Chat').collection(key).doc('Messages')
-            .set({message: [chats]});
+            firestore().collection('Messages').doc('Admin').collection('Chat').doc(key)
+            .set({message: chats});
         }
     });
 };
 
 const getChat = (key: string, callback: any) => {
-    firestore().collection('Messages').doc('Chat').collection(key).doc('Messages')
+    console.log('====================================');
+    console.log(key);
+    console.log('====================================');
+    firestore().collection('Messages').doc('Admin').collection('Chat').doc(key)
     .onSnapshot((chats: any) => {
         if (chats.exists) {
             let messages = [...chats.data().message];
@@ -638,17 +661,26 @@ const getChat = (key: string, callback: any) => {
 const getMessages = (callback: any) => {
     AsyncStorage.getItem('user').then((me: any) => {
         firestore().collection('Messages').doc(me).onSnapshot((c: any) => {
-            let contact = [...c.data().keys];
-            contact.forEach((val: any) => {
-                firestore().collection('Users').doc(val.user).get()
-                .then((k: any) => {
-                    val.name = `${k.data().firstname} ${k.data().lastname}`;
-                    callback(contact);
+            if ( c.exists) {
+                let contact = [...c.data().keys];
+                contact.forEach((val: any) => {
+                    console.log('====================================');
+                    console.log(val);
+                    console.log('====================================');
+                    firestore().collection('Users').doc(val.user).get()
+                    .then((k: any) => {
+                        val.name = `${k.data().firstname} ${k.data().lastname}`;
+                        val.disabled = false;
+                        callback(contact);
+                    });
                 });
-            });
+            } else {
+                callback([{name: 'No message yet', disabled: true}]);
+            }
         });
     });
 };
+
 
 
 
